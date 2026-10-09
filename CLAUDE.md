@@ -21,7 +21,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/): they
    - `operations`: the operationIds covered; `permissions`: the spec's `x-permissions`.
    - `readOnly` only for GET operations; set `destructive`, `idempotent`, `exposesSecrets` when relevant.
    - `async: true` when a write operation has `x-processingMode: async`: then follow "Asynchronous operations" below.
-   - Inputs: flat, described Zod fields; reuse `organizationInput`, `paginationInput`, `responseFormatInput`. Use `apiPath` for URLs. When the API expects nested objects, keep the inputs flat (prefixed if needed) and build the body in the handler, validating per-variant requirements with `ToolInputError` (see `forge_create_certificate`).
+   - Inputs: flat, described Zod fields; reuse `organizationInput`, `paginationInput`, `responseFormatInput`. Use `apiPath` for URLs and `readResource` (`src/tools/shared/read.ts`) to read a single resource. When the API expects nested objects, keep the inputs flat (prefixed if needed) and build the body in the handler, validating per-variant requirements with `ToolInputError` (see `forge_create_certificate`).
    - Output: `outputSchema` with nullable fields and `z.looseObject`; concise by default.
    - `summary`: one or two sentences, including the next step (e.g. pagination cursor, polling for async operations).
 3. Register it in `src/tools/registry.ts` and add it to the README tools table.
@@ -44,10 +44,10 @@ How to observe the outcome:
 
 | Operation | `poll` | `phase` |
 |---|---|---|
-| Create/update a resource with a status field | read the resource (pass the write response as `initial` when it returns one) | `phaseOf(status, { pending: [...transitional], failed: [...] })` |
+| Create/update a resource with a status field | read the resource (pass the write response as `initial` when it returns one) | `phaseOf(status, { pending: [...transitional], failed: [...] })`; `installationPhase` for the common installing/installed/removing lifecycle |
 | Status where only some values mean success | read the resource | `phaseOf(status, { completed: [...], failed: [...] })` |
 | Delete | `orGone(() => client.get(path))` | `value === null ? 'completed' : 'pending'` |
-| Create without an ID in the response | list the collection, find the new item (e.g. by URL or name) | found ? completed : pending |
+| Create without an ID in the response | before the write, remember the IDs from `listNewestFirst` (filtered by name, path… when possible); then poll it and take `findNew` | found ? its status phase : pending |
 | Toggle a setting | read the owning resource | field equals the requested value ? completed : pending |
 | Update several settings | read the resource | every requested field the resource exposes matches ? completed : pending; if none is exposed, return `queued` with a hint |
 | Replace a file (.env, Nginx config) | read the content back | equals the sent content, ignoring trailing whitespace ? completed : pending |
@@ -62,6 +62,7 @@ When the async response already carries the final result (e.g. `forge_create_dep
 
 - Prefer consolidating endpoints that differ only by a path segment into one tool with an enum argument.
 - Asynchronous operations follow the contract in "Asynchronous operations" above; don't hand-roll polling loops.
+- The client sends JSON bodies, or multipart when the body is a `FormData` (file uploads: take the content as a string input, see `forge_import_redirect_rules`); pass `accept` for non-JSON responses (e.g. CSV, see `forge_export_redirect_rules`).
 - Errors are returned as tool results (`isError`) with actionable messages, never thrown to the client.
 - Secret values (tokens, trigger URLs, credentials) are hidden with `redact()` unless `FORGE_ALLOW_SECRETS` is enabled. Tools whose purpose is returning a secret, or replacing a whole secret file (which needs reading it first), set `exposesSecrets`. Prefer an extra tool that changes secrets without returning them (e.g. `forge_set_site_env_vars`).
 - Site-scoped tools take `organization`, `server` and `site` (`siteScopeInput`); IDs accept numbers or strings (`idInput`).

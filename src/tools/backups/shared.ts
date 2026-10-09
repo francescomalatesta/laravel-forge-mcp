@@ -131,11 +131,6 @@ export function backupPhase(status: unknown): Phase {
   return phaseOf(status, { completed: ['finished'], failed: ['failed'] });
 }
 
-/** First page of a collection, newest first: used to spot items created by a write that returns no body. */
-export async function newestFirst(client: ForgeClient, path: string, signal: AbortSignal): Promise<FlatResource[]> {
-  const response = await client.get<CollectionDocument>(path, { query: { sort: ['-created_at'], page: { size: 100 } }, signal });
-  return flattenCollection(response.data).items;
-}
 
 /** Resolves a storage provider ID or name to its ID. */
 export async function resolveStorageProviderId(

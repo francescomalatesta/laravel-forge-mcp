@@ -7,7 +7,10 @@ export interface RecordedRequest {
 
 export interface MockResponse {
   status?: number;
+  /** Sent as JSON:API. */
   body?: unknown;
+  /** Sent as is (e.g. CSV): set the content-type in `headers`. */
+  text?: string;
   headers?: Record<string, string>;
 }
 
@@ -26,7 +29,8 @@ export function createMockFetch(...queue: MockHandler[]) {
       method: init.method ?? 'GET',
       url: new URL(String(input)),
       headers: new Headers(init.headers),
-      body: typeof init.body === 'string' ? JSON.parse(init.body) : undefined,
+      // JSON bodies are parsed; FormData (multipart uploads) is recorded as is.
+      body: typeof init.body === 'string' ? JSON.parse(init.body) : init.body instanceof FormData ? init.body : undefined,
     };
     requests.push(request);
 
@@ -39,6 +43,7 @@ export function createMockFetch(...queue: MockHandler[]) {
     if (handled instanceof Error) throw handled;
 
     const status = handled.status ?? 200;
+    if (handled.text !== undefined) return new Response(handled.text, { status, headers: handled.headers });
     const hasBody = handled.body !== undefined && status !== 204;
     return new Response(hasBody ? JSON.stringify(handled.body) : null, {
       status,

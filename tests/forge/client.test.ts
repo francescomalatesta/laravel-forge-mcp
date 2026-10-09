@@ -41,6 +41,22 @@ describe('ForgeClient', () => {
     expect(requests[0]?.body).toEqual({ name: 'web' });
   });
 
+  it('sends FormData bodies as multipart without forcing a content type', async () => {
+    const { client, requests } = setup([{ status: 202, body: { imported: 1 } }]);
+    const form = new FormData();
+    form.append('mode', 'append');
+    await client.post('/orgs/acme/upload', { body: form });
+    expect(requests[0]?.headers.has('content-type')).toBe(false);
+    expect((requests[0]?.body as FormData).get('mode')).toBe('append');
+  });
+
+  it('returns non-JSON responses as text with a custom Accept header', async () => {
+    const { client, requests } = setup([{ text: 'from,to,type\n/a,/b,permanent\n', headers: { 'content-type': 'text/csv' } }]);
+    const response = await client.get<string>('/orgs/acme/export', { accept: 'text/csv' });
+    expect(requests[0]?.headers.get('accept')).toBe('text/csv');
+    expect(response.data).toBe('from,to,type\n/a,/b,permanent\n');
+  });
+
   it('returns undefined data for 204 responses', async () => {
     const { client } = setup([{ status: 204 }]);
     const response = await client.delete('/orgs/acme/servers/1');

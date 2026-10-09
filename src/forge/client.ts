@@ -19,7 +19,10 @@ export interface ForgeClientOptions {
 
 export interface RequestOptions {
   query?: ForgeQuery | undefined;
+  /** Sent as JSON, or as multipart/form-data when it is a FormData (file uploads). */
   body?: unknown;
+  /** Accept header, for endpoints that return something other than JSON (e.g. "text/csv"). */
+  accept?: string | undefined;
   signal?: AbortSignal | undefined;
 }
 
@@ -124,11 +127,14 @@ export class ForgeClient {
   private send(method: HttpMethod, url: string, options: RequestOptions): Promise<Response> {
     const headers: Record<string, string> = {
       Authorization: `Bearer ${this.apiToken}`,
-      Accept: 'application/json',
+      Accept: options.accept ?? 'application/json',
       'User-Agent': this.userAgent,
     };
-    let body: string | undefined;
-    if (options.body !== undefined) {
+    let body: string | FormData | undefined;
+    if (options.body instanceof FormData) {
+      // fetch sets the multipart Content-Type with its boundary.
+      body = options.body;
+    } else if (options.body !== undefined) {
       headers['Content-Type'] = 'application/json';
       body = JSON.stringify(options.body);
     }
