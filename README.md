@@ -106,6 +106,11 @@ npm run build
 | `forge_create_certificate` | sites | Let's Encrypt, existing, CSR or cloned certificate, waiting until installed |
 | `forge_run_certificate_action` | sites | Activate or deactivate a certificate |
 | `forge_delete_certificate` | sites | Delete a certificate |
+| `forge_list_package_credentials` | sites | Credentials for private Composer repositories and npm registries (secrets hidden) |
+| `forge_set_package_credentials` | sites | Add or replace Composer or npm credentials |
+| `forge_delete_package_credentials` | sites | Remove Composer or npm credentials |
+| `forge_get_load_balancer` | sites | Servers a load-balanced site sends traffic to |
+| `forge_update_load_balancer` | sites | Replace the nodes and balancing method, take nodes out of rotation |
 | `forge_run_service_action` | servers | Restart or stop Nginx, MySQL, Postgres, Redis, Supervisor; restart or reload PHP-FPM |
 | `forge_run_server_action` | servers | Reboot or power-cycle a server |
 | `forge_get_server_log` | servers | End of a server log (Nginx, PHP-FPM, MySQL, cron, daemons) |
@@ -113,6 +118,10 @@ npm run build
 | `forge_update_server` | servers | Rename, change IP addresses, timezone or tags |
 | `forge_get_server_network` | servers | Servers that can reach each other on the private network |
 | `forge_update_server_network` | servers | Set the server network |
+| `forge_list_nginx_templates` | servers | Custom Nginx templates for new sites |
+| `forge_create_nginx_template` | servers | Save an Nginx template |
+| `forge_update_nginx_template` | servers | Rename or replace an Nginx template |
+| `forge_delete_nginx_template` | servers | Delete an Nginx template |
 | `forge_list_archived_servers` | servers | Archived servers |
 | `forge_archive_server` | servers | Archive a server (Forge stops managing it) |
 | `forge_unarchive_server` | servers | Restore an archived server |
@@ -192,6 +201,13 @@ npm run build
 | `forge_delete_ssh_key` | security | Revoke an SSH key |
 | `forge_get_server_public_key` | security | The server's own public key (for Git providers, other servers) |
 | `forge_regenerate_server_key` | security | Replace the server's own key pair |
+| `forge_list_heartbeats` | monitoring | Heartbeats of a site and whether they are missing |
+| `forge_create_heartbeat` | monitoring | Alert when a scheduled task stops pinging |
+| `forge_update_heartbeat` | monitoring | Change name, schedule or grace period |
+| `forge_delete_heartbeat` | monitoring | Delete a heartbeat |
+| `forge_list_monitors` | monitoring | CPU, disk and memory monitors and their alert state |
+| `forge_create_monitor` | monitoring | Alert by email when a metric crosses a threshold |
+| `forge_delete_monitor` | monitoring | Remove a monitor |
 | `forge_get_site_integrations` | integrations | Horizon, Octane, Reverb, Pulse, Inertia SSR, scheduler and maintenance mode status |
 | `forge_enable_site_integration` | integrations | Enable an integration (e.g. put the site in maintenance mode) and wait until it is active |
 | `forge_disable_site_integration` | integrations | Disable an integration (e.g. bring the site back up) |
