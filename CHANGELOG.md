@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.13.0] - 2026-10-09
+
+### Features
+
+- **sites:** manage package credentials and load balancer nodes ([8dc94ce](https://github.com/francescomalatesta/laravel-forge-mcp/commit/8dc94ce0546a93750bd6790a6fcfe9fa9c94a6ba))
+- **servers:** manage Nginx templates ([a48bda3](https://github.com/francescomalatesta/laravel-forge-mcp/commit/a48bda307faf74c8a6084bc9ddadc0eb4762458e))
+- **monitoring:** manage heartbeats and server monitors ([36e601a](https://github.com/francescomalatesta/laravel-forge-mcp/commit/36e601a01c537be697ef0885162f2d185817bd0b))
+
 ## [0.12.0] - 2026-10-09
 
 ### Features
