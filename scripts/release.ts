@@ -59,9 +59,9 @@ async function plan(): Promise<void> {
   }
 
   const tag = `v${pkg.version}`;
-  if (!tagExists(tag)) restoreTag(tag, published.gitHead);
+  const baseline = tagExists(tag) ? tag : publishedCommit(tag, published.gitHead);
 
-  const commits = commitsSince(tag)
+  const commits = commitsSince(baseline)
     .map(parseCommit)
     .filter((commit): commit is ParsedCommit => commit !== undefined);
   const bump = determineBump(commits);
@@ -93,10 +93,12 @@ async function registryManifest(name: string, version: string): Promise<{ gitHea
 }
 
 /**
- * Recreates a missing version tag on the commit npm recorded at publish time
- * (`gitHead`), e.g. after a manual first publish without tagging.
+ * Falls back to the commit npm recorded at publish time (`gitHead`) when the
+ * version tag is missing, e.g. after a manual first publish without tagging.
+ * The tag is not recreated: GitHub refuses GITHUB_TOKEN pushes of refs to
+ * commits whose workflow files differ from the default branch.
  */
-function restoreTag(tag: string, gitHead: string | undefined): void {
+function publishedCommit(tag: string, gitHead: string | undefined): string {
   const isAncestor = (commit: string) => {
     try {
       git('merge-base', '--is-ancestor', commit, 'HEAD');
@@ -108,13 +110,12 @@ function restoreTag(tag: string, gitHead: string | undefined): void {
   if (!gitHead || !isAncestor(gitHead)) {
     fail(`Tag ${tag} is missing and npm has no usable gitHead for it: create the tag on the released commit and push it.`);
   }
-  git('tag', tag, gitHead);
-  git('push', 'origin', `refs/tags/${tag}`);
-  console.log(`Restored missing tag ${tag} on ${gitHead.slice(0, 7)} (gitHead recorded by npm).`);
+  console.log(`Tag ${tag} not found: using the published commit ${gitHead.slice(0, 7)} (npm gitHead) as the baseline.`);
+  return gitHead;
 }
 
-function commitsSince(tag: string): Commit[] {
-  const log = git('log', `${tag}..HEAD`, '--no-merges', '--format=%H%x1f%s%x1f%b%x1e');
+function commitsSince(ref: string): Commit[] {
+  const log = git('log', `${ref}..HEAD`, '--no-merges', '--format=%H%x1f%s%x1f%b%x1e');
   return log
     .split('\x1e')
     .map((entry) => entry.trim())

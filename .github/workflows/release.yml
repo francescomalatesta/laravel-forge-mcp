@@ -31,17 +31,17 @@ jobs:
       contents: write # push the release commit and tag, create the GitHub release
       id-token: write # npm Trusted Publishing
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0 # tags and history are needed to compute the next version
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
 
-      # Trusted Publishing requires npm >= 11.5.1.
-      - run: npm install -g npm@11.6.2
+      # Trusted Publishing requires npm >= 11.5.1 (Node 24 ships a newer npm).
+      - run: npm --version
 
       - run: npm ci
 
@@ -97,7 +97,7 @@ jobs:
       # by setting the repository variable MCP_PUBLISHER_VERSION (e.g. v1.2.3).
       MCP_PUBLISHER_VERSION: ${{ vars.MCP_PUBLISHER_VERSION || 'latest' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: main # includes the release commit with the bumped server.json
 
