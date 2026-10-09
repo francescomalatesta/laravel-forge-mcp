@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
+import { OPERATION_ALIASES } from '../../scripts/operation-aliases.js';
 import { listOperations, loadSpec } from '../../scripts/spec.js';
 import { parseToolsets } from '../../src/config.js';
 import { defineTool, type AnyToolDefinition } from '../../src/tools/define-tool.js';
@@ -28,6 +29,16 @@ describe('tool definitions', () => {
       // A read-only tool may only cover GET operations.
       if (tool.readOnly) expect(operation!.method).toBe('GET');
     }
+  });
+});
+
+describe('operation aliases', () => {
+  it.each(Object.entries(OPERATION_ALIASES))('%s', (alias, { target, reason }) => {
+    expect(specOperations.has(alias), 'alias not in the spec').toBe(true);
+    expect(specOperations.has(target), 'target not in the spec').toBe(true);
+    expect(reason.length).toBeGreaterThan(10);
+    // Tools call the target; declaring the alias too would hide which endpoint is used.
+    expect(ALL_TOOLS.some((tool) => tool.operations.includes(alias))).toBe(false);
   });
 });
 
