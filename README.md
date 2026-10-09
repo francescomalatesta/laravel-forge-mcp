@@ -222,6 +222,24 @@ npm run build
 | `forge_delete_recipe` | recipes | Delete a recipe |
 | `forge_run_recipe` | recipes | Run a recipe on servers and wait for every run |
 | `forge_list_recipe_runs` | recipes | Runs of a recipe, with output |
+| `forge_list_teams` | teams | Teams of the organization |
+| `forge_create_team` | teams | Create a team with members and invitations |
+| `forge_update_team` | teams | Rename a team or replace its members |
+| `forge_delete_team` | teams | Delete a team |
+| `forge_list_team_members` | teams | Members of a team and their roles |
+| `forge_update_team_member` | teams | Change a member's role |
+| `forge_remove_team_member` | teams | Remove a member from a team |
+| `forge_list_team_invitations` | teams | Pending invitations of a team |
+| `forge_invite_team_member` | teams | Invite someone by email |
+| `forge_cancel_team_invitation` | teams | Cancel a pending invitation |
+| `forge_list_team_resources` | teams | Servers, recipes or credentials shared with a team |
+| `forge_share_with_team` | teams | Share a server, recipe or credential with a team |
+| `forge_unshare_from_team` | teams | Revoke a team's access to a server, recipe or credential |
+| `forge_list_roles` | teams | Custom and predefined roles |
+| `forge_list_permissions` | teams | Permissions, or those of a role |
+| `forge_create_role` | teams | Create a custom role |
+| `forge_update_role` | teams | Rename a role or replace its permissions |
+| `forge_delete_role` | teams | Delete a custom role |
 | `forge_get_site_integrations` | integrations | Horizon, Octane, Reverb, Pulse, Inertia SSR, scheduler and maintenance mode status |
 | `forge_enable_site_integration` | integrations | Enable an integration (e.g. put the site in maintenance mode) and wait until it is active |
 | `forge_disable_site_integration` | integrations | Disable an integration (e.g. bring the site back up) |
