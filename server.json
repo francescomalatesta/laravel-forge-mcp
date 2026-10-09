@@ -7,13 +7,13 @@
     "url": "https://github.com/francescomalatesta/laravel-forge-mcp",
     "source": "github"
   },
-  "version": "0.9.0",
+  "version": "0.10.0",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@francescomalatesta/laravel-forge-mcp",
-      "version": "0.9.0",
+      "version": "0.10.0",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"

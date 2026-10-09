@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.10.0] - 2026-10-09
+
+### Features
+
+- **commands:** run commands on sites and read their output ([2b22955](https://github.com/francescomalatesta/laravel-forge-mcp/commit/2b229558ba3c929bad3d4b486b4b6662c1f04381))
+- **integrations:** enable and disable Laravel integrations and maintenance mode ([5dd5173](https://github.com/francescomalatesta/laravel-forge-mcp/commit/5dd5173d6c7f7ce0e6db32b6dd6a5f3f1a6f621f))
+
 ## [0.9.0] - 2026-10-09
 
 ### Features
