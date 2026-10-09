@@ -65,4 +65,5 @@ When the async response already carries the final result (e.g. `forge_create_dep
 - Errors are returned as tool results (`isError`) with actionable messages, never thrown to the client.
 - Secret values (tokens, trigger URLs, credentials) are hidden with `redact()` unless `FORGE_ALLOW_SECRETS` is enabled. Tools whose purpose is returning a secret, or replacing a whole secret file (which needs reading it first), set `exposesSecrets`. Prefer an extra tool that changes secrets without returning them (e.g. `forge_set_site_env_vars`).
 - Site-scoped tools take `organization`, `server` and `site` (`siteScopeInput`); IDs accept numbers or strings (`idInput`).
+- When a path needs an internal ID users rarely know, also accept a natural reference and resolve it with a lookup, failing with a `ToolInputError` that names the tool to fix it (e.g. `phpVersionRefInput` + `resolvePhpVersionId`: "8.3" → installed version ID). Declare the lookup operation too.
 - Log only to stderr (`src/logger.ts`): stdout is the stdio protocol channel.
