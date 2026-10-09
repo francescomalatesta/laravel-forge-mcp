@@ -8,16 +8,21 @@ export async function readResource(client: ForgeClient, path: string, signal: Ab
 }
 
 /**
- * First page of a collection, newest first: used to spot the item created by a
- * write that returns no body (remember the IDs before, find the new one after).
+ * First page (100 items) of a collection, used to spot the item created by a
+ * write that returns no body: remember the IDs before, find the new one after.
+ * `sortable`: the endpoint accepts `sort=-created_at` (Forge rejects sorts an
+ * endpoint does not declare), so the newest items come first.
  */
-export async function listNewestFirst(
+export async function listRecent(
   client: ForgeClient,
   path: string,
   signal: AbortSignal,
-  filter: Record<string, string | undefined> = {},
+  options: { sortable: boolean; filter?: Record<string, string | undefined> },
 ): Promise<FlatResource[]> {
-  const response = await client.get<CollectionDocument>(path, { query: { filter, sort: ['-created_at'], page: { size: 100 } }, signal });
+  const response = await client.get<CollectionDocument>(path, {
+    query: { filter: options.filter, sort: options.sortable ? ['-created_at'] : undefined, page: { size: 100 } },
+    signal,
+  });
   return flattenCollection(response.data).items;
 }
 

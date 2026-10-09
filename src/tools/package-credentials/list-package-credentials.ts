@@ -2,7 +2,6 @@ import { z } from 'zod';
 import { flattenCollection, type CollectionDocument } from '../../forge/jsonapi.js';
 import { defineTool } from '../define-tool.js';
 import { readResource } from '../shared/read.js';
-import { paginationInput, paginationOutput, paginationSummary } from '../shared/schemas.js';
 import { SITE_NOT_FOUND_HINT, siteScopeInput } from '../shared/site-scope.js';
 import {
   credentialKeyInput,
@@ -28,31 +27,27 @@ export const listPackageCredentials = defineTool({
     ...siteScopeInput,
     manager: managerInput,
     repository: credentialKeyInput.optional().describe('Return only the credentials of this repository or registry.'),
-    ...paginationInput,
   },
   outputSchema: {
     credentials: z.array(credentialOutput),
-    ...paginationOutput,
   },
   async handler(args, { client, config, organization, signal }) {
     const org = organization(args.organization);
     const format = (flat: Record<string, unknown>) => formatCredential(args.manager, flat, config.allowSecrets);
     if (args.repository !== undefined) {
       const credential = format(await readResource(client, credentialPath(org, args.server, args.site, args.manager, args.repository), signal));
-      return { structured: { credentials: [credential], next_cursor: null, has_more: false }, summary: `Credentials for ${credential.repository}.` };
+      return { structured: { credentials: [credential] }, summary: `Credentials for ${credential.repository}.` };
     }
-    const response = await client.get<CollectionDocument>(credentialsPath(org, args.server, args.site, args.manager), {
-      query: { page: { size: args.page_size, cursor: args.cursor } },
-      signal,
-    });
+    // The endpoint is not paginated: it returns every credential of the site.
+    const response = await client.get<CollectionDocument>(credentialsPath(org, args.server, args.site, args.manager), { signal });
     const page = flattenCollection(response.data);
     const credentials = page.items.map(format);
     return {
-      structured: { credentials, next_cursor: page.nextCursor, has_more: page.nextCursor !== null },
+      structured: { credentials },
       summary:
         credentials.length === 0
           ? `No ${args.manager} credentials found.`
-          : `Found ${args.manager} credentials for: ${credentials.map((c) => c.repository).join(', ')}.${paginationSummary(page.nextCursor)}`,
+          : `Found ${args.manager} credentials for: ${credentials.map((c) => c.repository).join(', ')}.`,
     };
   },
 });

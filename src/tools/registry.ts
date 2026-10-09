@@ -89,12 +89,23 @@ import { uninstallPhpVersion } from './php/uninstall-php-version.js';
 import { updatePhpConfig } from './php/update-php-config.js';
 import { updatePhpLimits } from './php/update-php-limits.js';
 import { upgradePhpVersion } from './php/upgrade-php-version.js';
+import { createRecipe } from './recipes/create-recipe.js';
+import { deleteRecipe } from './recipes/delete-recipe.js';
+import { listRecipeRuns } from './recipes/list-recipe-runs.js';
+import { listRecipes } from './recipes/list-recipes.js';
+import { runRecipe } from './recipes/run-recipe.js';
+import { updateRecipe } from './recipes/update-recipe.js';
 import { createRedirectRule } from './redirects/create-redirect-rule.js';
 import { deleteRedirectRule } from './redirects/delete-redirect-rule.js';
 import { exportRedirectRules } from './redirects/export-redirect-rules.js';
 import { importRedirectRules } from './redirects/import-redirect-rules.js';
 import { listRedirectRules } from './redirects/list-redirect-rules.js';
 import { reorderRedirectRules } from './redirects/reorder-redirect-rules.js';
+import { createRole } from './roles/create-role.js';
+import { deleteRole } from './roles/delete-role.js';
+import { listPermissions } from './roles/list-permissions.js';
+import { listRoles } from './roles/list-roles.js';
+import { updateRole } from './roles/update-role.js';
 import { createScheduledJob } from './scheduled-jobs/create-scheduled-job.js';
 import { deleteScheduledJob } from './scheduled-jobs/delete-scheduled-job.js';
 import { getScheduledJob } from './scheduled-jobs/get-scheduled-job.js';
@@ -148,6 +159,19 @@ import { createStorageProvider } from './storage/create-storage-provider.js';
 import { deleteStorageProvider } from './storage/delete-storage-provider.js';
 import { listStorageProviders } from './storage/list-storage-providers.js';
 import { updateStorageProvider } from './storage/update-storage-provider.js';
+import { cancelTeamInvitation } from './teams/cancel-team-invitation.js';
+import { createTeam } from './teams/create-team.js';
+import { deleteTeam } from './teams/delete-team.js';
+import { inviteTeamMember } from './teams/invite-team-member.js';
+import { listTeamInvitations } from './teams/list-team-invitations.js';
+import { listTeamMembers } from './teams/list-team-members.js';
+import { listTeamResources } from './teams/list-team-resources.js';
+import { listTeams } from './teams/list-teams.js';
+import { removeTeamMember } from './teams/remove-team-member.js';
+import { shareWithTeam } from './teams/share-with-team.js';
+import { unshareFromTeam } from './teams/unshare-from-team.js';
+import { updateTeam } from './teams/update-team.js';
+import { updateTeamMember } from './teams/update-team-member.js';
 import { getCurrentUser } from './user/get-current-user.js';
 
 /** Every tool shipped by the server. Add new tools here. */
@@ -308,6 +332,32 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   listServerCredentials,
   listVpcs,
   createVpc,
+  // recipes
+  listRecipes,
+  createRecipe,
+  updateRecipe,
+  deleteRecipe,
+  runRecipe,
+  listRecipeRuns,
+  // teams, roles and permissions
+  listTeams,
+  createTeam,
+  updateTeam,
+  deleteTeam,
+  listTeamMembers,
+  updateTeamMember,
+  removeTeamMember,
+  listTeamInvitations,
+  inviteTeamMember,
+  cancelTeamInvitation,
+  listTeamResources,
+  shareWithTeam,
+  unshareFromTeam,
+  listRoles,
+  listPermissions,
+  createRole,
+  updateRole,
+  deleteRole,
   // integrations
   getSiteIntegrations,
   enableSiteIntegration,

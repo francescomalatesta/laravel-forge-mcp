@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { defineTool } from '../define-tool.js';
 import { installationPhase, operationOutput, outcome, waitFor, waitInput } from '../shared/async.js';
-import { findNew, listNewestFirst } from '../shared/read.js';
+import { findNew, listRecent } from '../shared/read.js';
 import { organizationInput, serverInput } from '../shared/schemas.js';
 import { SERVER_NOT_FOUND_HINT } from '../servers/shared.js';
 import { firewallRuleOutput, firewallRulesPath, formatFirewallRule } from './shared.js';
@@ -37,7 +37,7 @@ export const createFirewallRule = defineTool({
   async handler(args, { client, organization, signal, sleep, progress }) {
     const base = firewallRulesPath(organization(args.organization), args.server);
     // Forge returns no body: remember the existing rules with this name to spot the new one.
-    const lookup = () => listNewestFirst(client, base, signal, { name: args.name });
+    const lookup = () => listRecent(client, base, signal, { sortable: true, filter: { name: args.name } });
     const existing = args.wait ? new Set((await lookup()).map((rule) => rule.id)) : undefined;
     await client.post(base, { body: { name: args.name, port: args.port, ip_address: args.ip_address, type: args.type }, signal });
     const action = `${args.type} ${args.port ? `port ${args.port}` : 'every port'}${args.ip_address ? ` from ${args.ip_address}` : ''}`;

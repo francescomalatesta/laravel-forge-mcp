@@ -1,6 +1,6 @@
 import { defineTool } from '../define-tool.js';
 import { operationOutput, outcome, waitFor, waitInput } from '../shared/async.js';
-import { findNew, listNewestFirst } from '../shared/read.js';
+import { findNew, listRecent } from '../shared/read.js';
 import { organizationInput, serverInput } from '../shared/schemas.js';
 import {
   BACKUP_CONFIGURATION_NOT_FOUND_HINT,
@@ -39,7 +39,7 @@ export const createBackup = defineTool({
   async handler(args, { client, organization, signal, sleep, progress }) {
     const base = backupsPath(organization(args.organization), args.server, args.backup_configuration);
     // Forge returns no body: remember the existing backups to spot the new one.
-    const existing = args.wait ? new Set((await listNewestFirst(client, base, signal)).map((item) => item.id)) : undefined;
+    const existing = args.wait ? new Set((await listRecent(client, base, signal, { sortable: true })).map((item) => item.id)) : undefined;
     await client.post(base, { signal });
     const action = `back up configuration ${args.backup_configuration}`;
     if (!existing) {
@@ -50,7 +50,7 @@ export const createBackup = defineTool({
     }
 
     const result = await waitFor({
-      poll: async () => findNew(await listNewestFirst(client, base, signal), existing),
+      poll: async () => findNew(await listRecent(client, base, signal, { sortable: true }), existing),
       phase: (backup) => (backup ? backupPhase(backup.status) : 'pending'),
       describe: (backup) => (backup ? `Backup is ${backup.status}` : 'Waiting for the backup to start'),
       timeoutSeconds: args.timeout_seconds,

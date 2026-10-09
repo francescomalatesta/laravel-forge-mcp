@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { defineTool } from '../define-tool.js';
 import { operationOutput, outcome, waitFor, waitInput } from '../shared/async.js';
-import { findNew, listNewestFirst } from '../shared/read.js';
+import { findNew, listRecent } from '../shared/read.js';
 import { organizationInput, serverInput } from '../shared/schemas.js';
 import { SERVER_NOT_FOUND_HINT } from '../servers/shared.js';
 import { databaseRefsInput, resolveDatabaseIds } from '../databases/shared.js';
@@ -61,7 +61,7 @@ export const createBackupConfiguration = defineTool({
     const databaseIds = await resolveDatabaseIds(client, org, args.server, args.databases, signal);
     const base = backupConfigurationsPath(org, args.server);
     // Forge returns no body: remember the existing configurations to spot the new one.
-    const existing = args.wait ? new Set((await listNewestFirst(client, base, signal)).map((item) => item.id)) : undefined;
+    const existing = args.wait ? new Set((await listRecent(client, base, signal, { sortable: true })).map((item) => item.id)) : undefined;
 
     await client.post(base, {
       body: {
@@ -86,7 +86,7 @@ export const createBackupConfiguration = defineTool({
     }
 
     const result = await waitFor({
-      poll: async () => findNew(await listNewestFirst(client, base, signal), existing),
+      poll: async () => findNew(await listRecent(client, base, signal, { sortable: true }), existing),
       phase: (configuration) => (configuration ? backupConfigurationPhase(configuration.status) : 'pending'),
       describe: (configuration) => (configuration ? `Backup configuration is ${configuration.status}` : 'Waiting for the configuration to appear'),
       timeoutSeconds: args.timeout_seconds,
