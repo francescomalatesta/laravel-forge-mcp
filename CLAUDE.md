@@ -49,16 +49,18 @@ How to observe the outcome:
 | Delete | `orGone(() => client.get(path))` | `value === null ? 'completed' : 'pending'` |
 | Create without an ID in the response | list the collection, find the new item (e.g. by URL or name) | found ? completed : pending |
 | Toggle a setting | read the owning resource | field equals the requested value ? completed : pending |
+| Update several settings | read the resource | every requested field the resource exposes matches ? completed : pending; if none is exposed, return `queued` with a hint |
+| Replace a file (.env, Nginx config) | read the content back | equals the sent content, ignoring trailing whitespace ? completed : pending |
 
 Transitional status values are listed in the spec enums (e.g. sites: `creating`, `installing`, `removing`; certificates: `verifying`, `creating`, `installing`; databases: `installing`, `removing`). Read errors while waiting never fail the tool: the write already succeeded, so `waitFor` returns `queued` with the reason (`unfollowed`) and `outcome` explains it.
 
-When the async response already carries the final result (e.g. `forge_create_deploy_key` returns the key), set `async: true` and the status fields but skip `wait`. Reference implementations: `forge_deploy_site` (resource status, custom summaries), `forge_reset_deployment_state` (status endpoint), `forge_set_push_to_deploy` (toggle), `forge_create_deployment_webhook` (find in list), `forge_delete_deployment_webhook` (wait for 404).
+When the async response already carries the final result (e.g. `forge_create_deploy_key` returns the key), set `async: true` and the status fields but skip `wait`. Reference implementations: `forge_deploy_site` (resource status, custom summaries), `forge_create_site` (status with `initial` from the response), `forge_reset_deployment_state` (status endpoint), `forge_set_push_to_deploy` (toggle), `forge_update_site` (several settings), `forge_update_site_nginx_config` (file content), `forge_create_deployment_webhook` (find in list), `forge_delete_deployment_webhook` (wait for 404).
 
 ## Conventions
 
 - Prefer consolidating endpoints that differ only by a path segment into one tool with an enum argument.
 - Asynchronous operations follow the contract in "Asynchronous operations" above; don't hand-roll polling loops.
 - Errors are returned as tool results (`isError`) with actionable messages, never thrown to the client.
-- Secret values (tokens, trigger URLs, credentials) are hidden with `redact()` unless `FORGE_ALLOW_SECRETS` is enabled; tools whose purpose is returning a secret set `exposesSecrets`.
+- Secret values (tokens, trigger URLs, credentials) are hidden with `redact()` unless `FORGE_ALLOW_SECRETS` is enabled. Tools whose purpose is returning a secret, or replacing a whole secret file (which needs reading it first), set `exposesSecrets`. Prefer an extra tool that changes secrets without returning them (e.g. `forge_set_site_env_vars`).
 - Site-scoped tools take `organization`, `server` and `site` (`siteScopeInput`); IDs accept numbers or strings (`idInput`).
 - Log only to stderr (`src/logger.ts`): stdout is the stdio protocol channel.
