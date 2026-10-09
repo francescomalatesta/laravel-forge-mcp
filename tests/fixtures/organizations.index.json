@@ -1,0 +1,36 @@
+{
+  "data": [
+    {
+      "id": "1",
+      "type": "organizations",
+      "attributes": {
+        "name": "Acme",
+        "slug": "acme",
+        "created_at": "2025-07-29T09:00:00Z",
+        "updated_at": "2025-07-30T09:00:00Z"
+      },
+      "links": { "self": { "href": "https://forge.laravel.com/api/orgs/acme" } }
+    },
+    {
+      "id": "2",
+      "type": "organizations",
+      "attributes": {
+        "name": "Side Project",
+        "slug": "side-project",
+        "created_at": "2025-08-01T10:00:00Z",
+        "updated_at": null
+      },
+      "links": { "self": { "href": "https://forge.laravel.com/api/orgs/side-project" } }
+    }
+  ],
+  "links": {
+    "first": "https://forge.laravel.com/api/orgs",
+    "next": "https://forge.laravel.com/api/orgs?page%5Bcursor%5D=eyJpZCI6Mn0"
+  },
+  "meta": {
+    "path": "https://forge.laravel.com/api/orgs",
+    "per_page": 2,
+    "next_cursor": "eyJpZCI6Mn0",
+    "prev_cursor": null
+  }
+}

@@ -1,0 +1,2 @@
+src/forge/schema.gen.ts linguist-generated=true -diff
+spec/forge.openapi.json linguist-generated=true

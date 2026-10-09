@@ -1,0 +1,96 @@
+{
+  "data": [
+    {
+      "id": "101",
+      "type": "servers",
+      "attributes": {
+        "id": 101,
+        "credential_id": 7,
+        "name": "production-web-01",
+        "slug": "production-web-01",
+        "type": "app",
+        "ubuntu_version": "24.04",
+        "ssh_port": 22,
+        "provider": "ocean2",
+        "identifier": "412345678",
+        "size": "s-2vcpu-2gb",
+        "region": "nyc3",
+        "php_version": "php83",
+        "php_cli_version": "php83",
+        "opcache_status": "enabled",
+        "database_type": "mysql8",
+        "db_status": "installed",
+        "redis_status": "installed",
+        "ip_address": "192.168.1.1",
+        "private_ip_address": "10.0.0.2",
+        "revoked": false,
+        "created_at": "2025-07-29T09:00:00Z",
+        "updated_at": "2025-07-30T09:00:00Z",
+        "connection_status": "successful",
+        "timezone": "UTC",
+        "local_public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAITestKey worker@forge",
+        "is_ready": true
+      },
+      "relationships": {
+        "tags": { "data": [{ "type": "tags", "id": "9" }] }
+      },
+      "links": { "self": { "href": "https://forge.laravel.com/api/orgs/acme/servers/101" } }
+    },
+    {
+      "id": "102",
+      "type": "servers",
+      "attributes": {
+        "id": 102,
+        "credential_id": null,
+        "name": "staging-worker",
+        "slug": "staging-worker",
+        "type": "worker",
+        "ubuntu_version": "22.04",
+        "ssh_port": 22,
+        "provider": "custom",
+        "identifier": null,
+        "size": "custom",
+        "region": "custom",
+        "php_version": null,
+        "php_cli_version": null,
+        "opcache_status": null,
+        "database_type": null,
+        "db_status": null,
+        "redis_status": null,
+        "ip_address": null,
+        "private_ip_address": null,
+        "revoked": false,
+        "created_at": "2025-08-02T12:00:00Z",
+        "updated_at": "2025-08-02T12:30:00Z",
+        "connection_status": null,
+        "timezone": "Europe/Rome",
+        "local_public_key": null,
+        "is_ready": false
+      },
+      "relationships": {
+        "tags": { "data": [] }
+      },
+      "links": { "self": { "href": "https://forge.laravel.com/api/orgs/acme/servers/102" } }
+    }
+  ],
+  "included": [
+    {
+      "id": "9",
+      "type": "tags",
+      "attributes": {
+        "name": "production",
+        "created_at": "2025-07-29T09:00:00Z",
+        "updated_at": "2025-07-29T09:00:00Z"
+      }
+    }
+  ],
+  "links": {
+    "first": "https://forge.laravel.com/api/orgs/acme/servers"
+  },
+  "meta": {
+    "path": "https://forge.laravel.com/api/orgs/acme/servers",
+    "per_page": 30,
+    "next_cursor": null,
+    "prev_cursor": null
+  }
+}
