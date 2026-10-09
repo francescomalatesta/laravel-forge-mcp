@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.9.0] - 2026-10-09
+
+### Features
+
+- **backups:** manage database backups and storage providers ([d146539](https://github.com/francescomalatesta/laravel-forge-mcp/commit/d1465399c1f582055a85c57ecb14aaee4efc74d5))
+
 ## [0.8.0] - 2026-10-09
 
 ### Features
