@@ -7,7 +7,11 @@ MCP server for the Laravel Forge API (v2, organization-scoped). TypeScript, `@mo
 - `npm run check` — typecheck + tests + API coverage. Run before every commit.
 - `npm run coverage:api -- --missing` — uncovered Forge operations.
 - `npm run spec:update` — refresh `spec/forge.openapi.json` and regenerate `src/forge/schema.gen.ts` (never edit it by hand).
-- Releases: `npm version <patch|minor|major>` then `git push --follow-tags` (see RELEASING.md). Never edit versions in `package.json`/`server.json` by hand.
+- Releases are automatic on push to `main` (see RELEASING.md). Never edit versions in `package.json`, `server.json` or `CHANGELOG.md` release sections by hand.
+
+## Commit messages
+
+Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/): they decide the next version. `fix:`/`perf:` → patch, `feat:` → minor, `!` or `BREAKING CHANGE:` → major; `docs:`, `chore:`, `test:`, `ci:`, `refactor:` do not release. Use the tool or resource as scope, e.g. `feat(sites): add forge_list_sites`.
 
 ## Adding a tool
 

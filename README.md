@@ -108,7 +108,7 @@ npm run spec:update    # download the latest spec and regenerate types
 npm run check          # typecheck + tests + coverage
 ```
 
-Releases are automated: see [RELEASING.md](RELEASING.md).
+Every push to `main` with `feat:` or `fix:` commits is released to npm automatically, based on [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/): see [RELEASING.md](RELEASING.md).
 
 ### Project structure
 

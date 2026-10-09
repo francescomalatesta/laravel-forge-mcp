@@ -1,12 +1,16 @@
 name: Release
 
-# Publishes to npm when a version tag is pushed (created by `npm version`).
-# npm authentication uses Trusted Publishing (OIDC): no npm token is stored in GitHub.
-# See RELEASING.md for the one-time setup.
+# On every push to main: run the full CI, then release if the commits since the
+# last version tag warrant it (Conventional Commits: fix → patch, feat → minor,
+# breaking → major; minor while on 0.x). The workflow bumps package.json,
+# package-lock.json and server.json, updates CHANGELOG.md, pushes the release
+# commit and tag, publishes to npm (Trusted Publishing, no token) and creates a
+# GitHub release. See RELEASING.md.
 
 on:
   push:
-    tags: ['v*.*.*']
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -16,14 +20,20 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  npm:
-    name: Publish to npm
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  release:
+    name: Release
+    needs: ci
     runs-on: ubuntu-latest
     permissions:
-      contents: write # create the GitHub release
+      contents: write # push the release commit and tag, create the GitHub release
       id-token: write # npm Trusted Publishing
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # tags and history are needed to compute the next version
 
       - uses: actions/setup-node@v4
         with:
@@ -35,30 +45,47 @@ jobs:
 
       - run: npm ci
 
-      - name: Tag matches package.json and server.json versions
+      - name: Plan release
+        id: plan
+        run: npx tsx scripts/release.ts plan
+
+      - name: Bump version, update changelog, tag
+        if: steps.plan.outputs.mode == 'release'
+        env:
+          VERSION: ${{ steps.plan.outputs.version }}
+          NOTES_FILE: ${{ steps.plan.outputs.notes_file }}
         run: |
-          node -e '
-            const pkg = require("./package.json");
-            const server = require("./server.json");
-            const tag = process.env.GITHUB_REF_NAME.replace(/^v/, "");
-            const versions = [pkg.version, server.version, ...server.packages.map((p) => p.version)];
-            if (versions.some((v) => v !== tag)) {
-              console.error(`Tag v${tag} does not match versions ${versions.join(", ")}. Use "npm version" to bump.`);
-              process.exit(1);
-            }
-          '
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Updates package.json and package-lock.json; the `version` script syncs server.json.
+          npm version "$VERSION" --no-git-tag-version
+          npx tsx scripts/release.ts changelog "$NOTES_FILE"
+          git commit -am "chore(release): v$VERSION"
+          git tag "v$VERSION"
+          # Atomic: fails without side effects if main moved in the meantime.
+          git push --atomic origin HEAD:main "v$VERSION"
 
       # prepublishOnly runs typecheck, tests, API coverage and the build.
-      - run: npm publish --provenance
+      - name: Publish to npm
+        if: steps.plan.outputs.mode != 'skip'
+        run: npm publish --provenance
 
       - name: Create GitHub release
-        run: gh release create "$GITHUB_REF_NAME" --verify-tag --generate-notes
+        if: steps.plan.outputs.mode != 'skip'
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: v${{ steps.plan.outputs.version }}
+          NOTES_FILE: ${{ steps.plan.outputs.notes_file }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists"
+          else
+            gh release create "$TAG" --title "$TAG" --notes-file "$NOTES_FILE" --target "$(git rev-parse HEAD)"
+          fi
 
   mcp-registry:
     name: Publish to the MCP Registry
-    needs: npm
+    needs: release
     # Opt-in: set the repository variable MCP_REGISTRY_PUBLISH=true to enable.
     if: vars.MCP_REGISTRY_PUBLISH == 'true'
     runs-on: ubuntu-latest
@@ -71,8 +98,19 @@ jobs:
       MCP_PUBLISHER_VERSION: ${{ vars.MCP_PUBLISHER_VERSION || 'latest' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main # includes the release commit with the bumped server.json
+
+      - name: Skip versions already in the registry
+        id: check
+        run: |
+          name=$(jq -r .name server.json)
+          version=$(jq -r .version server.json)
+          status=$(curl -s -o /dev/null -w '%{http_code}' "https://registry.modelcontextprotocol.io/v0/servers/$(jq -rn --arg n "$name" '$n|@uri')/versions/$version")
+          echo "publish=$([ "$status" = "200" ] && echo false || echo true)" >> "$GITHUB_OUTPUT"
 
       - name: Install mcp-publisher
+        if: steps.check.outputs.publish == 'true'
         run: |
           asset="mcp-publisher_linux_amd64.tar.gz"
           if [ "$MCP_PUBLISHER_VERSION" = "latest" ]; then
@@ -82,6 +120,8 @@ jobs:
           fi
           curl -fsSL "$url" | tar xz mcp-publisher
 
-      - run: ./mcp-publisher login github-oidc
+      - if: steps.check.outputs.publish == 'true'
+        run: ./mcp-publisher login github-oidc
 
-      - run: ./mcp-publisher publish
+      - if: steps.check.outputs.publish == 'true'
+        run: ./mcp-publisher publish
