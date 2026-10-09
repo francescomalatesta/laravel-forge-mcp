@@ -46,6 +46,9 @@ import { runDomainAction } from './domains/run-domain-action.js';
 import { updateDomain } from './domains/update-domain.js';
 import { getServerEvent } from './events/get-server-event.js';
 import { listServerEvents } from './events/list-server-events.js';
+import { disableSiteIntegration } from './integrations/disable-site-integration.js';
+import { enableSiteIntegration } from './integrations/enable-site-integration.js';
+import { getSiteIntegrations } from './integrations/get-site-integrations.js';
 import { listOrganizations } from './organizations/list-organizations.js';
 import { getPhpConfig } from './php/get-php-config.js';
 import { getPhpSettings } from './php/get-php-settings.js';
@@ -192,6 +195,10 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   getDeployKey,
   createDeployKey,
   deleteDeployKey,
+  // integrations
+  getSiteIntegrations,
+  enableSiteIntegration,
+  disableSiteIntegration,
 ];
 
 /** Tools enabled by the configuration (toolsets, read-only mode, secrets opt-in). */

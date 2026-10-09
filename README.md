@@ -164,6 +164,9 @@ npm run build
 | `forge_delete_deploy_key` | deployments | Remove the deploy key |
 | `forge_get_deploy_hook` 🔑 | deployments | The deployment trigger URL |
 | `forge_regenerate_deploy_hook` 🔑 | deployments | Generate a new deployment trigger URL |
+| `forge_get_site_integrations` | integrations | Horizon, Octane, Reverb, Pulse, Inertia SSR, scheduler and maintenance mode status |
+| `forge_enable_site_integration` | integrations | Enable an integration (e.g. put the site in maintenance mode) and wait until it is active |
+| `forge_disable_site_integration` | integrations | Disable an integration (e.g. bring the site back up) |
 
 🔑 Reads or replaces secrets: registered only when `FORGE_ALLOW_SECRETS=true`. Secret fields returned by other tools (e.g. a site's `deployment_url`) are hidden unless secrets are allowed.
 
