@@ -112,6 +112,7 @@ npm run build
 | `forge_delete_package_credentials` | sites | Remove Composer or npm credentials |
 | `forge_get_load_balancer` | sites | Servers a load-balanced site sends traffic to |
 | `forge_update_load_balancer` | sites | Replace the nodes and balancing method, take nodes out of rotation |
+| `forge_create_server` | servers | Provision a server on a cloud provider or connect a custom VPS, waiting until it is ready |
 | `forge_run_service_action` | servers | Restart or stop Nginx, MySQL, Postgres, Redis, Supervisor; restart or reload PHP-FPM |
 | `forge_run_server_action` | servers | Reboot or power-cycle a server |
 | `forge_get_server_log` | servers | End of a server log (Nginx, PHP-FPM, MySQL, cron, daemons) |

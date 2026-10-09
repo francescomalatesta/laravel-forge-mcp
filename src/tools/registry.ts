@@ -111,6 +111,7 @@ import { listServerCredentials } from './providers/list-server-credentials.js';
 import { listVpcs } from './providers/list-vpcs.js';
 import { archiveServer } from './servers/archive-server.js';
 import { clearServerLog } from './servers/clear-server-log.js';
+import { createServer } from './servers/create-server.js';
 import { deleteServer } from './servers/delete-server.js';
 import { getServer } from './servers/get-server.js';
 import { getServerLog } from './servers/get-server-log.js';
@@ -194,6 +195,7 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   getLoadBalancer,
   updateLoadBalancer,
   // servers
+  createServer,
   runServiceAction,
   runServerAction,
   getServerLog,
