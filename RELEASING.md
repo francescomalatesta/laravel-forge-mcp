@@ -46,7 +46,7 @@ The same mechanism recovers from a run that pushed the release commit but failed
 
 2. **Branch protection.** The workflow pushes the release commit to `main` with the built-in `GITHUB_TOKEN`. If `main` requires pull requests or status checks, allow GitHub Actions to bypass those rules, otherwise the push is rejected.
 
-3. **Version tags.** Each release is computed from the tag of the current version (`v0.1.0`, `v0.2.0`, ...). If the tag of the published version is missing (e.g. after a manual publish), the workflow recreates it on the commit npm recorded at publish time (`gitHead`).
+3. **Version tags.** Each release is computed from the tag of the current version (`v0.1.0`, `v0.2.0`, ...). If the tag of the published version is missing (e.g. after a manual publish), the workflow uses the commit npm recorded at publish time (`gitHead`) instead. The tag itself is not recreated, because GitHub does not let the Actions token push tags to older commits whose workflow files differ.
 
 Once a CI release has succeeded you can set the package's **Publishing access** to *require two-factor authentication and disallow tokens*.
 

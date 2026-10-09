@@ -14,24 +14,29 @@ const INSTRUCTIONS = `Tools for managing Laravel Forge (servers, sites, deployme
 - Every resource belongs to an organization. If an "organization" argument is required and unknown, call forge_list_organizations first.
 - Resources are addressed by ID. Use the list tools (e.g. forge_list_servers) to find IDs instead of guessing.
 - List tools are paginated: when "has_more" is true, pass "next_cursor" as "cursor" to get the next page.
-- Many write operations are asynchronous in Forge: an accepted request is not yet completed.`;
+- Many write operations are asynchronous in Forge: an accepted request is not yet completed. Follow the outcome with the tool named in the result, or with forge_list_server_events and forge_get_server_event.
+- Site and deployment tools need both the server ID and the site ID: forge_list_sites returns both.`;
+
+export type Sleep = (ms: number, signal: AbortSignal) => Promise<void>;
 
 export interface CreateServerOptions {
   config: Config;
   client: ForgeClient;
   tools?: readonly AnyToolDefinition[];
+  /** Injectable for tests. */
+  sleep?: Sleep;
 }
 
-export function createServer({ config, client, tools }: CreateServerOptions): McpServer {
+export function createServer({ config, client, tools, sleep = abortableSleep }: CreateServerOptions): McpServer {
   const server = new McpServer({ name: SERVER_NAME, version: VERSION }, { instructions: INSTRUCTIONS });
 
   for (const tool of tools ?? selectTools(config)) {
-    registerTool(server, tool, config, client);
+    registerTool(server, tool, config, client, sleep);
   }
   return server;
 }
 
-function registerTool(server: McpServer, tool: AnyToolDefinition, config: Config, client: ForgeClient): void {
+function registerTool(server: McpServer, tool: AnyToolDefinition, config: Config, client: ForgeClient, sleep: Sleep): void {
   server.registerTool(
     tool.name,
     {
@@ -55,6 +60,15 @@ function registerTool(server: McpServer, tool: AnyToolDefinition, config: Config
         client,
         config,
         signal: extra.signal,
+        sleep: (ms) => sleep(ms, extra.signal),
+        progress: async (progress, total, message) => {
+          const progressToken = extra._meta?.progressToken;
+          if (progressToken === undefined) return;
+          await extra.sendNotification({
+            method: 'notifications/progress',
+            params: { progressToken, progress, ...(total !== undefined ? { total } : {}), message },
+          });
+        },
         organization: (explicit) => {
           const slug = explicit ?? config.organization;
           if (!slug) throw new ToolInputError(MISSING_ORGANIZATION_MESSAGE);
@@ -81,4 +95,19 @@ function registerTool(server: McpServer, tool: AnyToolDefinition, config: Config
 function describe(tool: AnyToolDefinition): string {
   const permissions = tool.permissions.length > 0 ? `\n\nRequired Forge permission: ${tool.permissions.join(', ')}.` : '';
   return `${tool.description}${permissions}`;
+}
+
+function abortableSleep(ms: number, signal: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (signal.aborted) return reject(signal.reason);
+    const timer = setTimeout(() => {
+      signal.removeEventListener('abort', onAbort);
+      resolve();
+    }, ms);
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject(signal.reason);
+    };
+    signal.addEventListener('abort', onAbort, { once: true });
+  });
 }

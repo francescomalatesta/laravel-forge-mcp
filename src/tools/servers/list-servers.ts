@@ -8,43 +8,14 @@ import {
   paginationInput,
   paginationOutput,
   paginationSummary,
-  pick,
   responseFormatInput,
 } from '../shared/schemas.js';
+import { formatServer, serverOutput } from './format.js';
 
 type ServerResource = components['schemas']['ServerResource'];
 
-/** Fields returned in "concise" mode: enough to identify and pick a server. */
-const CONCISE_FIELDS = [
-  'id',
-  'name',
-  'type',
-  'provider',
-  'region',
-  'size',
-  'ip_address',
-  'php_version',
-  'database_type',
-  'is_ready',
-  'connection_status',
-] as const;
-
 const SORT_FIELDS = ['name', 'provider', 'ubuntu_version', 'region', 'php_version', 'created_at', 'updated_at'] as const;
 const SORT_VALUES = SORT_FIELDS.flatMap((field) => [field, `-${field}`]) as [string, ...string[]];
-
-const serverOutput = z.looseObject({
-  id: z.string().describe('Server ID, used as the `server` argument of other tools.'),
-  name: z.string().nullable(),
-  type: z.string().nullable().describe('app, web, loadbalancer, database, cache, worker, meilisearch, ...'),
-  provider: z.string().nullable(),
-  region: z.string().nullable(),
-  size: z.string().nullable(),
-  ip_address: z.string().nullable(),
-  php_version: z.string().nullable(),
-  database_type: z.string().nullable(),
-  is_ready: z.boolean().nullable(),
-  connection_status: z.string().nullable(),
-});
 
 export const listServers = defineTool({
   name: 'forge_list_servers',
@@ -99,9 +70,7 @@ export const listServers = defineTool({
     });
 
     const page = flattenCollection(response.data);
-    const servers = page.items.map(
-      (item) => (args.response_format === 'detailed' ? item : pick(item, CONCISE_FIELDS)) as z.output<typeof serverOutput>,
-    );
+    const servers = page.items.map((item) => formatServer(item, args.response_format === 'detailed'));
 
     return {
       structured: {

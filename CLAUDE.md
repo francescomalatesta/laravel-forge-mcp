@@ -24,11 +24,13 @@ Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/): they
    - Output: `outputSchema` with nullable fields and `z.looseObject`; concise by default.
    - `summary`: one or two sentences, including the next step (e.g. pagination cursor, polling for async operations).
 3. Register it in `src/tools/registry.ts` and add it to the README tools table.
-4. Add a fixture in `tests/fixtures/` (register it in `tests/fixtures.test.ts`, which validates it against the spec) and a test in `tests/tools/` using `createHarness`.
+4. Test it in `tests/tools/` with `createHarness`. Build mock responses with `specResponse(operationId, status, overrides)` / `specSchema(name, overrides)` from `tests/helpers/spec-fixtures.ts`: they are generated from the spec and validated against it.
 
 ## Conventions
 
 - Prefer consolidating endpoints that differ only by a path segment into one tool with an enum argument.
 - Async operations (`x-processingMode: async`, HTTP 202) must say the work is queued and which tool checks progress.
 - Errors are returned as tool results (`isError`) with actionable messages, never thrown to the client.
+- Secret values (tokens, trigger URLs, credentials) are hidden with `redact()` unless `FORGE_ALLOW_SECRETS` is enabled; tools whose purpose is returning a secret set `exposesSecrets`.
+- Site-scoped tools take `organization`, `server` and `site` (`siteScopeInput`); IDs accept numbers or strings (`idInput`).
 - Log only to stderr (`src/logger.ts`): stdout is the stdio protocol channel.

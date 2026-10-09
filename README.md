@@ -70,31 +70,35 @@ npm run build
 | `FORGE_TIMEOUT_MS` | `30000` | Per-request timeout. |
 | `FORGE_MAX_RETRIES` | `2` | Retries for rate limits (429) and transient errors. |
 
-### Toolsets
-
-| Toolset | Contents |
-|---|---|
-| `core` | Organizations, servers and other entry points |
-| `sites` | Sites, domains, certificates, Nginx, site configuration |
-| `deployments` | Deployments, scripts, logs, push-to-deploy |
-| `servers` | PHP, services, network, events, server logs |
-| `databases` | Database schemas, users, backups |
-| `jobs` | Scheduled jobs, background processes |
-| `security` | Firewall, security and redirect rules, SSH keys |
-| `integrations` | Horizon, Octane, Reverb, Pulse, Inertia, scheduler, maintenance |
-| `monitoring` | Monitors, heartbeats, health checks |
-| `recipes` | Recipes and runs |
-| `teams` | Teams, members, invitations, roles |
-| `providers` | Providers, regions, sizes, credentials, VPCs |
-| `storage` | Storage providers |
-| `commands` | Arbitrary commands on sites (disabled by default) |
-
-## Tools
+### Tools
 
 | Tool | Toolset | Description |
 |---|---|---|
 | `forge_list_organizations` | core | List accessible organizations and their slugs |
 | `forge_list_servers` | core | List servers with filters, sorting and pagination |
+| `forge_get_server` | core | Every detail of a server |
+| `forge_list_sites` | core | Sites of an organization, a server or all organizations, with latest deployment |
+| `forge_get_site` | core | Every detail of a site, including its server |
+| `forge_list_server_events` | core | Operations Forge ran on a server or across the organization |
+| `forge_get_server_event` | core | An event with the output of its script |
+| `forge_list_deployments` | deployments | Deployments of a site or of every site on a server |
+| `forge_get_deployment` | deployments | A deployment with the end of its log |
+| `forge_get_deployment_status` | deployments | Whether a deployment is running |
+| `forge_deploy_site` | deployments | Deploy a site and (optionally) wait for the result, with progress notifications |
+| `forge_reset_deployment_state` | deployments | Unblock a stuck deployment |
+| `forge_get_deployment_script` | deployments | Read the deployment script |
+| `forge_update_deployment_script` | deployments | Replace the deployment script |
+| `forge_set_push_to_deploy` | deployments | Enable or disable push to deploy |
+| `forge_list_deployment_webhooks` | deployments | Webhooks notified after deployments |
+| `forge_create_deployment_webhook` | deployments | Add a deployment webhook |
+| `forge_delete_deployment_webhook` | deployments | Remove a deployment webhook |
+| `forge_get_deploy_key` | deployments | The site's SSH deploy key |
+| `forge_create_deploy_key` | deployments | Create a deploy key |
+| `forge_delete_deploy_key` | deployments | Remove the deploy key |
+| `forge_get_deploy_hook` 🔑 | deployments | The deployment trigger URL |
+| `forge_regenerate_deploy_hook` 🔑 | deployments | Generate a new deployment trigger URL |
+
+🔑 Returns secrets: registered only when `FORGE_ALLOW_SECRETS=true`. Secret fields returned by other tools (e.g. a site's `deployment_url`) are hidden unless secrets are allowed.
 
 ## Development
 
