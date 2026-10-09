@@ -174,6 +174,24 @@ npm run build
 | `forge_update_background_process` | jobs | Rename or replace the Supervisor configuration |
 | `forge_run_background_process_action` | jobs | Start, stop or restart a background process, or empty its log |
 | `forge_delete_background_process` | jobs | Stop and remove a background process |
+| `forge_list_firewall_rules` | security | Open and blocked ports of a server |
+| `forge_create_firewall_rule` | security | Allow or deny a port (range) for everyone or an IP/subnet |
+| `forge_delete_firewall_rule` | security | Remove a firewall rule |
+| `forge_list_security_rules` | security | Password-protected (basic auth) paths of a site |
+| `forge_create_security_rule` | security | Protect a site or a path with a password |
+| `forge_update_security_rule` | security | Change name, path or users of a security rule |
+| `forge_delete_security_rule` | security | Remove a password protection |
+| `forge_list_redirect_rules` | security | Redirect rules of a site |
+| `forge_create_redirect_rule` | security | Add a 301 or 302 redirect |
+| `forge_delete_redirect_rule` | security | Remove a redirect |
+| `forge_reorder_redirect_rules` | security | Set the evaluation order of the redirects |
+| `forge_export_redirect_rules` | security | Redirects as CSV, in evaluation order |
+| `forge_import_redirect_rules` | security | Import redirects from CSV (append or replace) |
+| `forge_list_ssh_keys` | security | SSH keys authorized on a server |
+| `forge_add_ssh_key` | security | Authorize a public key |
+| `forge_delete_ssh_key` | security | Revoke an SSH key |
+| `forge_get_server_public_key` | security | The server's own public key (for Git providers, other servers) |
+| `forge_regenerate_server_key` | security | Replace the server's own key pair |
 | `forge_get_site_integrations` | integrations | Horizon, Octane, Reverb, Pulse, Inertia SSR, scheduler and maintenance mode status |
 | `forge_enable_site_integration` | integrations | Enable an integration (e.g. put the site in maintenance mode) and wait until it is active |
 | `forge_disable_site_integration` | integrations | Disable an integration (e.g. bring the site back up) |

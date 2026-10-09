@@ -63,6 +63,11 @@ export function phaseOf(
   return lists.pending?.includes(value) ? 'pending' : 'completed';
 }
 
+/** The common lifecycle of installable resources (rules, keys, jobs…): installing → installed → removing. */
+export function installationPhase(status: unknown): Phase {
+  return phaseOf(status, { pending: ['installing', 'updating', 'removing'], failed: ['failed'] });
+}
+
 export interface WaitOptions<T> {
   /** Reads the current state of the operation (usually the affected resource). */
   poll: () => Promise<T>;

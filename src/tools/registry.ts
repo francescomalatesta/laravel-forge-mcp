@@ -56,6 +56,9 @@ import { runDomainAction } from './domains/run-domain-action.js';
 import { updateDomain } from './domains/update-domain.js';
 import { getServerEvent } from './events/get-server-event.js';
 import { listServerEvents } from './events/list-server-events.js';
+import { createFirewallRule } from './firewall/create-firewall-rule.js';
+import { deleteFirewallRule } from './firewall/delete-firewall-rule.js';
+import { listFirewallRules } from './firewall/list-firewall-rules.js';
 import { disableSiteIntegration } from './integrations/disable-site-integration.js';
 import { enableSiteIntegration } from './integrations/enable-site-integration.js';
 import { getSiteIntegrations } from './integrations/get-site-integrations.js';
@@ -70,10 +73,20 @@ import { uninstallPhpVersion } from './php/uninstall-php-version.js';
 import { updatePhpConfig } from './php/update-php-config.js';
 import { updatePhpLimits } from './php/update-php-limits.js';
 import { upgradePhpVersion } from './php/upgrade-php-version.js';
+import { createRedirectRule } from './redirects/create-redirect-rule.js';
+import { deleteRedirectRule } from './redirects/delete-redirect-rule.js';
+import { exportRedirectRules } from './redirects/export-redirect-rules.js';
+import { importRedirectRules } from './redirects/import-redirect-rules.js';
+import { listRedirectRules } from './redirects/list-redirect-rules.js';
+import { reorderRedirectRules } from './redirects/reorder-redirect-rules.js';
 import { createScheduledJob } from './scheduled-jobs/create-scheduled-job.js';
 import { deleteScheduledJob } from './scheduled-jobs/delete-scheduled-job.js';
 import { getScheduledJob } from './scheduled-jobs/get-scheduled-job.js';
 import { listScheduledJobs } from './scheduled-jobs/list-scheduled-jobs.js';
+import { createSecurityRule } from './security-rules/create-security-rule.js';
+import { deleteSecurityRule } from './security-rules/delete-security-rule.js';
+import { listSecurityRules } from './security-rules/list-security-rules.js';
+import { updateSecurityRule } from './security-rules/update-security-rule.js';
 import { archiveServer } from './servers/archive-server.js';
 import { clearServerLog } from './servers/clear-server-log.js';
 import { deleteServer } from './servers/delete-server.js';
@@ -103,6 +116,11 @@ import { updateSiteEnvironment } from './sites/update-site-environment.js';
 import { updateSiteHealthcheck } from './sites/update-site-healthcheck.js';
 import { updateSiteNginxConfig } from './sites/update-site-nginx-config.js';
 import { updateSiteRepository } from './sites/update-site-repository.js';
+import { addSshKey } from './ssh-keys/add-ssh-key.js';
+import { deleteSshKey } from './ssh-keys/delete-ssh-key.js';
+import { getServerPublicKey } from './ssh-keys/get-server-public-key.js';
+import { listSshKeys } from './ssh-keys/list-ssh-keys.js';
+import { regenerateServerKey } from './ssh-keys/regenerate-server-key.js';
 import { createStorageProvider } from './storage/create-storage-provider.js';
 import { deleteStorageProvider } from './storage/delete-storage-provider.js';
 import { listStorageProviders } from './storage/list-storage-providers.js';
@@ -220,6 +238,25 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   updateBackgroundProcess,
   runBackgroundProcessAction,
   deleteBackgroundProcess,
+  // security
+  listFirewallRules,
+  createFirewallRule,
+  deleteFirewallRule,
+  listSecurityRules,
+  createSecurityRule,
+  updateSecurityRule,
+  deleteSecurityRule,
+  listRedirectRules,
+  createRedirectRule,
+  deleteRedirectRule,
+  reorderRedirectRules,
+  exportRedirectRules,
+  importRedirectRules,
+  listSshKeys,
+  addSshKey,
+  deleteSshKey,
+  getServerPublicKey,
+  regenerateServerKey,
   // integrations
   getSiteIntegrations,
   enableSiteIntegration,
