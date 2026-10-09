@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.6.0] - 2026-10-09
+
+### Features
+
+- **servers:** restart services, reboot and manage servers ([40c4f3b](https://github.com/francescomalatesta/laravel-forge-mcp/commit/40c4f3be419c9ab028ff0b6b71b7f64cc55b8bed))
+
 ## [0.5.0] - 2026-10-09
 
 ### Features
