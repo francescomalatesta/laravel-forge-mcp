@@ -3,7 +3,8 @@ import { flattenCollection, type CollectionDocument } from '../../forge/jsonapi.
 import { defineTool } from '../define-tool.js';
 import { operationOutput, outcome, waitFor, waitInput } from '../shared/async.js';
 import { SITE_NOT_FOUND_HINT, siteScopeInput } from '../shared/site-scope.js';
-import { commandOutput, commandPhase, commandsPath, fetchOutput, formatCommand, NO_OUTPUT, outputFields, outputLinesInput } from './shared.js';
+import { fetchOutput, NO_OUTPUT, outputFields, outputLinesInput } from '../shared/output.js';
+import { commandOutput, commandPhase, commandsPath, formatCommand } from './shared.js';
 
 const CHECK_WITH = 'forge_get_site_command';
 

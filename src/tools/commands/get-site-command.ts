@@ -2,7 +2,8 @@ import { z } from 'zod';
 import { defineTool } from '../define-tool.js';
 import { readResource } from '../shared/read.js';
 import { siteScopeInput } from '../shared/site-scope.js';
-import { commandInput, commandOutput, commandsPath, fetchOutput, formatCommand, NO_OUTPUT, outputFields, outputLinesInput } from './shared.js';
+import { fetchOutput, NO_OUTPUT, outputFields, outputLinesInput } from '../shared/output.js';
+import { commandInput, commandOutput, commandsPath, formatCommand } from './shared.js';
 
 export const getSiteCommand = defineTool({
   name: 'forge_get_site_command',
