@@ -106,6 +106,11 @@ npm run build
 | `forge_create_certificate` | sites | Let's Encrypt, existing, CSR or cloned certificate, waiting until installed |
 | `forge_run_certificate_action` | sites | Activate or deactivate a certificate |
 | `forge_delete_certificate` | sites | Delete a certificate |
+| `forge_list_package_credentials` | sites | Credentials for private Composer repositories and npm registries (secrets hidden) |
+| `forge_set_package_credentials` | sites | Add or replace Composer or npm credentials |
+| `forge_delete_package_credentials` | sites | Remove Composer or npm credentials |
+| `forge_get_load_balancer` | sites | Servers a load-balanced site sends traffic to |
+| `forge_update_load_balancer` | sites | Replace the nodes and balancing method, take nodes out of rotation |
 | `forge_run_service_action` | servers | Restart or stop Nginx, MySQL, Postgres, Redis, Supervisor; restart or reload PHP-FPM |
 | `forge_run_server_action` | servers | Reboot or power-cycle a server |
 | `forge_get_server_log` | servers | End of a server log (Nginx, PHP-FPM, MySQL, cron, daemons) |

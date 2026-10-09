@@ -66,6 +66,8 @@ import { createHeartbeat } from './heartbeats/create-heartbeat.js';
 import { deleteHeartbeat } from './heartbeats/delete-heartbeat.js';
 import { listHeartbeats } from './heartbeats/list-heartbeats.js';
 import { updateHeartbeat } from './heartbeats/update-heartbeat.js';
+import { getLoadBalancer } from './load-balancing/get-load-balancer.js';
+import { updateLoadBalancer } from './load-balancing/update-load-balancer.js';
 import { createMonitor } from './monitors/create-monitor.js';
 import { deleteMonitor } from './monitors/delete-monitor.js';
 import { listMonitors } from './monitors/list-monitors.js';
@@ -74,6 +76,9 @@ import { deleteNginxTemplate } from './nginx-templates/delete-nginx-template.js'
 import { listNginxTemplates } from './nginx-templates/list-nginx-templates.js';
 import { updateNginxTemplate } from './nginx-templates/update-nginx-template.js';
 import { listOrganizations } from './organizations/list-organizations.js';
+import { deletePackageCredentials } from './package-credentials/delete-package-credentials.js';
+import { listPackageCredentials } from './package-credentials/list-package-credentials.js';
+import { setPackageCredentials } from './package-credentials/set-package-credentials.js';
 import { getPhpConfig } from './php/get-php-config.js';
 import { getPhpSettings } from './php/get-php-settings.js';
 import { installPhpVersion } from './php/install-php-version.js';
@@ -174,6 +179,12 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   createCertificate,
   runCertificateAction,
   deleteCertificate,
+  // sites: packages and load balancing
+  listPackageCredentials,
+  setPackageCredentials,
+  deletePackageCredentials,
+  getLoadBalancer,
+  updateLoadBalancer,
   // servers
   runServiceAction,
   runServerAction,
