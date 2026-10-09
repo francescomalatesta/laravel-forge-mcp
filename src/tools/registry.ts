@@ -30,6 +30,16 @@ import { updateDomain } from './domains/update-domain.js';
 import { getServerEvent } from './events/get-server-event.js';
 import { listServerEvents } from './events/list-server-events.js';
 import { listOrganizations } from './organizations/list-organizations.js';
+import { getPhpConfig } from './php/get-php-config.js';
+import { getPhpSettings } from './php/get-php-settings.js';
+import { installPhpVersion } from './php/install-php-version.js';
+import { listPhpVersions } from './php/list-php-versions.js';
+import { setDefaultPhpVersion } from './php/set-default-php-version.js';
+import { setPhpOpcache } from './php/set-php-opcache.js';
+import { uninstallPhpVersion } from './php/uninstall-php-version.js';
+import { updatePhpConfig } from './php/update-php-config.js';
+import { updatePhpLimits } from './php/update-php-limits.js';
+import { upgradePhpVersion } from './php/upgrade-php-version.js';
 import { archiveServer } from './servers/archive-server.js';
 import { clearServerLog } from './servers/clear-server-log.js';
 import { deleteServer } from './servers/delete-server.js';
@@ -109,6 +119,17 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   archiveServer,
   unarchiveServer,
   deleteServer,
+  // servers: PHP
+  listPhpVersions,
+  getPhpSettings,
+  installPhpVersion,
+  upgradePhpVersion,
+  uninstallPhpVersion,
+  setDefaultPhpVersion,
+  updatePhpLimits,
+  setPhpOpcache,
+  getPhpConfig,
+  updatePhpConfig,
   // deployments
   listDeployments,
   getDeployment,

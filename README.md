@@ -117,6 +117,16 @@ npm run build
 | `forge_archive_server` | servers | Archive a server (Forge stops managing it) |
 | `forge_unarchive_server` | servers | Restore an archived server |
 | `forge_delete_server` | servers | Delete a server (optionally keeping it at the provider) |
+| `forge_list_php_versions` | servers | Installed PHP versions |
+| `forge_get_php_settings` | servers | Default CLI and site versions, upload and execution limits, OPcache |
+| `forge_install_php_version` | servers | Install a PHP version (optionally as default) and wait until installed |
+| `forge_upgrade_php_version` | servers | Update a PHP version to its latest patch release |
+| `forge_uninstall_php_version` | servers | Uninstall a PHP version |
+| `forge_set_default_php_version` | servers | Default PHP version for the CLI or for new sites |
+| `forge_update_php_limits` | servers | Max upload size and max execution time |
+| `forge_set_php_opcache` | servers | Enable or disable OPcache |
+| `forge_get_php_config` | servers | FPM or CLI php.ini, or the FPM pool configuration |
+| `forge_update_php_config` | servers | Replace a PHP configuration file |
 | `forge_list_deployments` | deployments | Deployments of a site or of every site on a server |
 | `forge_get_deployment` | deployments | A deployment with the end of its log |
 | `forge_get_deployment_status` | deployments | Whether a deployment is running |
