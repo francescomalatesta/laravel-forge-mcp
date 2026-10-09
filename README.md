@@ -81,6 +81,20 @@ npm run build
 | `forge_get_site` | core | Every detail of a site, including its server |
 | `forge_list_server_events` | core | Operations Forge ran on a server or across the organization |
 | `forge_get_server_event` | core | An event with the output of its script |
+| `forge_create_site` | sites | Create a site (optionally with repository and database) and wait until it is installed |
+| `forge_create_balanced_site` | sites | Create a site on a load balancer |
+| `forge_update_site` | sites | Change PHP version, type, directories, branch, push to deploy, release retention |
+| `forge_update_site_repository` | sites | Switch source control provider, repository or branch |
+| `forge_delete_site` | sites | Delete a site |
+| `forge_set_site_env_vars` | sites | Set or remove .env variables without exposing the file |
+| `forge_get_site_environment` 🔑 | sites | Read the whole .env file |
+| `forge_update_site_environment` 🔑 | sites | Replace the whole .env file |
+| `forge_get_site_nginx_config` | sites | Read the site's Nginx configuration |
+| `forge_update_site_nginx_config` | sites | Replace the site's Nginx configuration |
+| `forge_get_site_log` | sites | End of the application, Nginx access or Nginx error log |
+| `forge_clear_site_log` | sites | Empty a site log |
+| `forge_get_site_healthcheck` | sites | Healthcheck URL used after zero-downtime deployments |
+| `forge_update_site_healthcheck` | sites | Set or remove the healthcheck URL |
 | `forge_list_deployments` | deployments | Deployments of a site or of every site on a server |
 | `forge_get_deployment` | deployments | A deployment with the end of its log |
 | `forge_get_deployment_status` | deployments | Whether a deployment is running |
@@ -98,7 +112,7 @@ npm run build
 | `forge_get_deploy_hook` 🔑 | deployments | The deployment trigger URL |
 | `forge_regenerate_deploy_hook` 🔑 | deployments | Generate a new deployment trigger URL |
 
-🔑 Returns secrets: registered only when `FORGE_ALLOW_SECRETS=true`. Secret fields returned by other tools (e.g. a site's `deployment_url`) are hidden unless secrets are allowed.
+🔑 Reads or replaces secrets: registered only when `FORGE_ALLOW_SECRETS=true`. Secret fields returned by other tools (e.g. a site's `deployment_url`) are hidden unless secrets are allowed.
 
 ### Background operations
 

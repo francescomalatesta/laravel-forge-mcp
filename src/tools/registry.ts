@@ -21,8 +21,22 @@ import { listServerEvents } from './events/list-server-events.js';
 import { listOrganizations } from './organizations/list-organizations.js';
 import { getServer } from './servers/get-server.js';
 import { listServers } from './servers/list-servers.js';
+import { clearSiteLog } from './sites/clear-site-log.js';
+import { createBalancedSite } from './sites/create-balanced-site.js';
+import { createSite } from './sites/create-site.js';
+import { deleteSite } from './sites/delete-site.js';
+import { getSiteEnvironment } from './sites/get-site-environment.js';
+import { getSiteHealthcheck } from './sites/get-site-healthcheck.js';
+import { getSiteLog } from './sites/get-site-log.js';
+import { getSiteNginxConfig } from './sites/get-site-nginx-config.js';
 import { getSite } from './sites/get-site.js';
 import { listSites } from './sites/list-sites.js';
+import { setSiteEnvVars } from './sites/set-site-env-vars.js';
+import { updateSite } from './sites/update-site.js';
+import { updateSiteEnvironment } from './sites/update-site-environment.js';
+import { updateSiteHealthcheck } from './sites/update-site-healthcheck.js';
+import { updateSiteNginxConfig } from './sites/update-site-nginx-config.js';
+import { updateSiteRepository } from './sites/update-site-repository.js';
 
 /** Every tool shipped by the server. Add new tools here. */
 export const ALL_TOOLS: readonly AnyToolDefinition[] = [
@@ -34,6 +48,21 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   getSite,
   listServerEvents,
   getServerEvent,
+  // sites
+  createSite,
+  createBalancedSite,
+  updateSite,
+  updateSiteRepository,
+  deleteSite,
+  setSiteEnvVars,
+  getSiteEnvironment,
+  updateSiteEnvironment,
+  getSiteNginxConfig,
+  updateSiteNginxConfig,
+  getSiteLog,
+  clearSiteLog,
+  getSiteHealthcheck,
+  updateSiteHealthcheck,
   // deployments
   listDeployments,
   getDeployment,
