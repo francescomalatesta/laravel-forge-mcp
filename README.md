@@ -4,7 +4,7 @@ A [Model Context Protocol](https://modelcontextprotocol.io) server for the [Lara
 
 > This is an unofficial, community project. It is not affiliated with or endorsed by Laravel.
 
-> **Status: early development.** The foundations are in place and the first tools are available. Coverage of the Forge API grows tool by tool; run `npm run coverage:api` for the current numbers.
+> **Status: complete coverage.** Every operation of the Forge API is covered by a tool (run `npm run coverage:api` to check). Feedback from real-world use is welcome.
 
 ## Design goals
 
@@ -69,6 +69,27 @@ npm run build
 | `FORGE_API_URL` | `https://forge.laravel.com/api` | API base URL. |
 | `FORGE_TIMEOUT_MS` | `30000` | Per-request timeout. |
 | `FORGE_MAX_RETRIES` | `2` | Retries for rate limits (429) and transient errors. |
+
+### Toolsets
+
+| Toolset | Default | Contents |
+|---|---|---|
+| `core` | ✓ | Organizations, current user, servers, sites and server events: the entry points of every workflow |
+| `sites` | ✓ | Site lifecycle, environment, Nginx, logs, domains, certificates, package credentials, load balancing |
+| `deployments` | ✓ | Deployments, deployment script, push to deploy, webhooks, deploy keys |
+| `servers` | | Create and manage servers, services, PHP, logs, network, archives, Nginx templates |
+| `databases` | | Databases, database users and backups |
+| `storage` | | Storage providers for backups |
+| `jobs` | | Scheduled jobs and background processes (Supervisor) |
+| `security` | | Firewall, basic auth, redirects, SSH keys |
+| `integrations` | | Horizon, Octane, Reverb, Pulse, Inertia, scheduler, maintenance mode |
+| `monitoring` | | Heartbeats and server monitors |
+| `recipes` | | Recipes and recipe runs |
+| `teams` | | Teams, members, invitations, sharing, roles and permissions |
+| `providers` | | Provider catalog (regions, sizes), provider credentials, VPCs |
+| `commands` | | Run arbitrary commands on sites (see below) |
+
+Enable what you need, e.g. `FORGE_TOOLSETS=default,servers,databases`: fewer tools in context help the model pick the right one.
 
 ### Tools
 

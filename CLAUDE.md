@@ -24,8 +24,8 @@ Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/): they
    - Inputs: flat, described Zod fields; reuse `organizationInput`, `paginationInput`, `responseFormatInput`. Use `apiPath` for URLs and `readResource` (`src/tools/shared/read.ts`) to read a single resource. When the API expects nested objects, keep the inputs flat (prefixed if needed) and build the body in the handler, validating per-variant requirements with `ToolInputError` (see `forge_create_certificate`).
    - Output: `outputSchema` with nullable fields and `z.looseObject`; concise by default.
    - `summary`: one or two sentences, including the next step (e.g. pagination cursor, polling for async operations).
-3. Register it in `src/tools/registry.ts` and add it to the README tools table.
-4. Test it in `tests/tools/` with `createHarness`. Build mock responses with `specResponse(operationId, status, overrides)` / `specSchema(name, overrides)` from `tests/helpers/spec-fixtures.ts`: they are generated from the spec and validated against it. The harness fails a test that makes a request with no mocked response or leaves mocked responses unused: queue exactly the calls the tool makes, polls included.
+3. Register it in `src/tools/registry.ts` and add it to the README tools table (`tests/readme.test.ts` checks both lists match).
+4. Test it in `tests/tools/` with `createHarness`. Build mock responses with `specResponse(operationId, status, overrides)` / `specSchema(name, overrides)` from `tests/helpers/spec-fixtures.ts`: they are generated from the spec and validated against it. The harness fails a test that makes a request with no mocked response or leaves mocked responses unused: queue exactly the calls the tool makes, polls included. It also fails a request to an endpoint the spec does not have, or with a query parameter (filter, sort value, page) the endpoint does not declare: Forge rejects undeclared filters and sorts.
 
 ## Asynchronous operations
 
