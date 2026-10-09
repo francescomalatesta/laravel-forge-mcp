@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.12.0] - 2026-10-09
+
+### Features
+
+- **security:** manage firewall, basic auth, redirects and SSH keys ([d5f3d78](https://github.com/francescomalatesta/laravel-forge-mcp/commit/d5f3d7844c5ca4fb254bd923da838e368d39de29))
+
 ## [0.11.0] - 2026-10-09
 
 ### Features
