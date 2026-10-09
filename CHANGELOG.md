@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.14.0] - 2026-10-09
+
+### Features
+
+- **teams:** manage teams, members, invitations, sharing and roles ([dffb718](https://github.com/francescomalatesta/laravel-forge-mcp/commit/dffb718092f37a4c8bd8580e3fa6190a16a2af9c))
+- **recipes:** manage and run recipes ([4db0ca7](https://github.com/francescomalatesta/laravel-forge-mcp/commit/4db0ca74627ef60b1bf7658e83c6e605bdeeb38d))
+- **servers:** create servers ([af522c3](https://github.com/francescomalatesta/laravel-forge-mcp/commit/af522c3196a0cd96155a600966024bee92b53947))
+- **providers:** browse providers, credentials and VPCs ([18bfb70](https://github.com/francescomalatesta/laravel-forge-mcp/commit/18bfb70b46a5a242422ff999b934f81ece26ca6b))
+
+### Bug fixes
+
+- send only the query parameters each endpoint declares ([71b3f67](https://github.com/francescomalatesta/laravel-forge-mcp/commit/71b3f67fc8b83f1a67bfe3d0bba9cd5dd7e07103))
+
 ## [0.13.0] - 2026-10-09
 
 ### Features
