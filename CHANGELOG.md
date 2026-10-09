@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.7.0] - 2026-10-09
+
+### Features
+
+- **servers:** manage PHP versions, settings and configuration ([f12c016](https://github.com/francescomalatesta/laravel-forge-mcp/commit/f12c0165b2376040ce0fec11daf8ed400f402742))
+
 ## [0.6.0] - 2026-10-09
 
 ### Features
