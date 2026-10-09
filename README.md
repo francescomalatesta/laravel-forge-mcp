@@ -89,12 +89,23 @@ npm run build
 | `forge_set_site_env_vars` | sites | Set or remove .env variables without exposing the file |
 | `forge_get_site_environment` 🔑 | sites | Read the whole .env file |
 | `forge_update_site_environment` 🔑 | sites | Replace the whole .env file |
-| `forge_get_site_nginx_config` | sites | Read the site's Nginx configuration |
-| `forge_update_site_nginx_config` | sites | Replace the site's Nginx configuration |
+| `forge_get_site_nginx_config` | sites | Read the Nginx configuration of a site or one of its domains |
+| `forge_update_site_nginx_config` | sites | Replace the Nginx configuration of a site or one of its domains |
 | `forge_get_site_log` | sites | End of the application, Nginx access or Nginx error log |
 | `forge_clear_site_log` | sites | Empty a site log |
 | `forge_get_site_healthcheck` | sites | Healthcheck URL used after zero-downtime deployments |
 | `forge_update_site_healthcheck` | sites | Set or remove the healthcheck URL |
+| `forge_list_domains` | sites | Domains of a site with status and www redirection |
+| `forge_get_domain` | sites | A domain with the DNS records to configure |
+| `forge_add_domain` | sites | Add a domain (alias) and wait until it is enabled |
+| `forge_update_domain` | sites | Change www redirection and wildcard subdomains |
+| `forge_run_domain_action` | sites | Enable, disable or mark a domain as primary |
+| `forge_delete_domain` | sites | Remove a domain |
+| `forge_list_certificates` | sites | SSL certificates of a site or of one domain |
+| `forge_get_certificate` | sites | A certificate, or the active one |
+| `forge_create_certificate` | sites | Let's Encrypt, existing, CSR or cloned certificate, waiting until installed |
+| `forge_run_certificate_action` | sites | Activate or deactivate a certificate |
+| `forge_delete_certificate` | sites | Delete a certificate |
 | `forge_list_deployments` | deployments | Deployments of a site or of every site on a server |
 | `forge_get_deployment` | deployments | A deployment with the end of its log |
 | `forge_get_deployment_status` | deployments | Whether a deployment is running |

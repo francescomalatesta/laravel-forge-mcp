@@ -5,7 +5,7 @@ MCP server for the Laravel Forge API (v2, organization-scoped). TypeScript, `@mo
 ## Commands
 
 - `npm run check` — typecheck + tests + API coverage. Run before every commit.
-- `npm run coverage:api -- --missing` — uncovered Forge operations.
+- `npm run coverage:api -- --missing` — uncovered Forge operations. Endpoints that duplicate another one (same request and response) are listed with a reason in `scripts/operation-aliases.ts`: tools call only the target and the alias counts as covered. Add an alias only for true duplicates, never to skip work.
 - `npm run spec:update` — refresh `spec/forge.openapi.json` and regenerate `src/forge/schema.gen.ts` (never edit it by hand).
 - Releases are automatic on push to `main` (see RELEASING.md). Never edit versions in `package.json`, `server.json` or `CHANGELOG.md` release sections by hand.
 
@@ -21,7 +21,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/): they
    - `operations`: the operationIds covered; `permissions`: the spec's `x-permissions`.
    - `readOnly` only for GET operations; set `destructive`, `idempotent`, `exposesSecrets` when relevant.
    - `async: true` when a write operation has `x-processingMode: async`: then follow "Asynchronous operations" below.
-   - Inputs: flat, described Zod fields; reuse `organizationInput`, `paginationInput`, `responseFormatInput`. Use `apiPath` for URLs.
+   - Inputs: flat, described Zod fields; reuse `organizationInput`, `paginationInput`, `responseFormatInput`. Use `apiPath` for URLs. When the API expects nested objects, keep the inputs flat (prefixed if needed) and build the body in the handler, validating per-variant requirements with `ToolInputError` (see `forge_create_certificate`).
    - Output: `outputSchema` with nullable fields and `z.looseObject`; concise by default.
    - `summary`: one or two sentences, including the next step (e.g. pagination cursor, polling for async operations).
 3. Register it in `src/tools/registry.ts` and add it to the README tools table.
