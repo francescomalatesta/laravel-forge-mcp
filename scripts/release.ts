@@ -51,16 +51,15 @@ async function plan(): Promise<void> {
     if (head !== sha) return output({ mode: 'skip', reason: `main moved to ${head.slice(0, 7)}; the newer run will release` });
   }
 
-  if (!(await isPublished(pkg.name, pkg.version))) {
+  const published = await registryManifest(pkg.name, pkg.version);
+  if (!published) {
     const notes = changelogSection(readFileSync('CHANGELOG.md', 'utf8'), pkg.version) ?? `Release ${pkg.version}.`;
     writeFileSync(notesFile, `${notes}\n`);
     return output({ mode: 'publish', version: pkg.version, notes_file: notesFile, reason: `${pkg.version} is not on npm yet` });
   }
 
   const tag = `v${pkg.version}`;
-  if (!tagExists(tag)) {
-    fail(`Tag ${tag} for the published version ${pkg.version} is missing: create it on the released commit and push it.`);
-  }
+  if (!tagExists(tag)) restoreTag(tag, published.gitHead);
 
   const commits = commitsSince(tag)
     .map(parseCommit)
@@ -85,14 +84,33 @@ function readPackage(): { name: string; version: string } {
   return JSON.parse(readFileSync('package.json', 'utf8'));
 }
 
-async function isPublished(name: string, version: string): Promise<boolean> {
-  const response = await fetch(`https://registry.npmjs.org/${name.replace('/', '%2f')}`, {
-    headers: { Accept: 'application/vnd.npm.install-v1+json' },
-  });
-  if (response.status === 404) return false;
-  if (!response.ok) fail(`npm registry returned ${response.status} for ${name}`);
-  const metadata = (await response.json()) as { versions?: Record<string, unknown> };
-  return Object.hasOwn(metadata.versions ?? {}, version);
+/** The published manifest of `name@version`, or undefined when that version is not on npm. */
+async function registryManifest(name: string, version: string): Promise<{ gitHead?: string } | undefined> {
+  const response = await fetch(`https://registry.npmjs.org/${name.replace('/', '%2f')}/${version}`);
+  if (response.status === 404) return undefined;
+  if (!response.ok) fail(`npm registry returned ${response.status} for ${name}@${version}`);
+  return (await response.json()) as { gitHead?: string };
+}
+
+/**
+ * Recreates a missing version tag on the commit npm recorded at publish time
+ * (`gitHead`), e.g. after a manual first publish without tagging.
+ */
+function restoreTag(tag: string, gitHead: string | undefined): void {
+  const isAncestor = (commit: string) => {
+    try {
+      git('merge-base', '--is-ancestor', commit, 'HEAD');
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  if (!gitHead || !isAncestor(gitHead)) {
+    fail(`Tag ${tag} is missing and npm has no usable gitHead for it: create the tag on the released commit and push it.`);
+  }
+  git('tag', tag, gitHead);
+  git('push', 'origin', `refs/tags/${tag}`);
+  console.log(`Restored missing tag ${tag} on ${gitHead.slice(0, 7)} (gitHead recorded by npm).`);
 }
 
 function commitsSince(tag: string): Commit[] {
