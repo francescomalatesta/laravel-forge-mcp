@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.11.0] - 2026-10-09
+
+### Features
+
+- **jobs:** manage scheduled jobs and background processes ([f93647a](https://github.com/francescomalatesta/laravel-forge-mcp/commit/f93647a624f0c27bb22cce47a4167e1a35f92198))
+
 ## [0.10.0] - 2026-10-09
 
 ### Features
