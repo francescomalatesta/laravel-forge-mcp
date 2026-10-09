@@ -136,6 +136,18 @@ npm run build
 | `forge_update_database_user` | databases | Change a user's password or databases |
 | `forge_delete_database_user` | databases | Delete a database user |
 | `forge_update_database_root_password` | databases | Change the database root password |
+| `forge_list_backup_configurations` | databases | Scheduled database backups: storage, schedule, retention, next run |
+| `forge_create_backup_configuration` | databases | Schedule backups of databases (by ID or name) to a storage provider |
+| `forge_update_backup_configuration` | databases | Change storage, databases, schedule or retention |
+| `forge_delete_backup_configuration` | databases | Stop scheduled backups |
+| `forge_list_backups` | databases | Backups of a configuration with status and size |
+| `forge_create_backup` | databases | Run a backup now and wait until it finishes |
+| `forge_delete_backup` | databases | Delete a backup |
+| `forge_restore_backup` | databases | Restore a database from a backup (overwrites it) |
+| `forge_list_storage_providers` | storage | S3, Spaces, Hetzner, OVH, Scaleway or S3-compatible storage for backups |
+| `forge_create_storage_provider` | storage | Add a storage provider (credentials are never returned) |
+| `forge_update_storage_provider` | storage | Change name, location or credentials |
+| `forge_delete_storage_provider` | storage | Remove a storage provider that no backup uses |
 | `forge_list_deployments` | deployments | Deployments of a site or of every site on a server |
 | `forge_get_deployment` | deployments | A deployment with the end of its log |
 | `forge_get_deployment_status` | deployments | Whether a deployment is running |

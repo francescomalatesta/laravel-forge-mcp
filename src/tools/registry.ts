@@ -1,5 +1,13 @@
 import type { Config } from '../config.js';
 import type { AnyToolDefinition } from './define-tool.js';
+import { createBackup } from './backups/create-backup.js';
+import { createBackupConfiguration } from './backups/create-backup-configuration.js';
+import { deleteBackup } from './backups/delete-backup.js';
+import { deleteBackupConfiguration } from './backups/delete-backup-configuration.js';
+import { listBackupConfigurations } from './backups/list-backup-configurations.js';
+import { listBackups } from './backups/list-backups.js';
+import { restoreBackup } from './backups/restore-backup.js';
+import { updateBackupConfiguration } from './backups/update-backup-configuration.js';
 import { createCertificate } from './certificates/create-certificate.js';
 import { deleteCertificate } from './certificates/delete-certificate.js';
 import { getCertificate } from './certificates/get-certificate.js';
@@ -78,6 +86,10 @@ import { updateSiteEnvironment } from './sites/update-site-environment.js';
 import { updateSiteHealthcheck } from './sites/update-site-healthcheck.js';
 import { updateSiteNginxConfig } from './sites/update-site-nginx-config.js';
 import { updateSiteRepository } from './sites/update-site-repository.js';
+import { createStorageProvider } from './storage/create-storage-provider.js';
+import { deleteStorageProvider } from './storage/delete-storage-provider.js';
+import { listStorageProviders } from './storage/list-storage-providers.js';
+import { updateStorageProvider } from './storage/update-storage-provider.js';
 
 /** Every tool shipped by the server. Add new tools here. */
 export const ALL_TOOLS: readonly AnyToolDefinition[] = [
@@ -149,6 +161,20 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   updateDatabaseUser,
   deleteDatabaseUser,
   updateDatabaseRootPassword,
+  // databases: backups
+  listBackupConfigurations,
+  createBackupConfiguration,
+  updateBackupConfiguration,
+  deleteBackupConfiguration,
+  listBackups,
+  createBackup,
+  deleteBackup,
+  restoreBackup,
+  // storage
+  listStorageProviders,
+  createStorageProvider,
+  updateStorageProvider,
+  deleteStorageProvider,
   // deployments
   listDeployments,
   getDeployment,
