@@ -62,6 +62,13 @@ import { listFirewallRules } from './firewall/list-firewall-rules.js';
 import { disableSiteIntegration } from './integrations/disable-site-integration.js';
 import { enableSiteIntegration } from './integrations/enable-site-integration.js';
 import { getSiteIntegrations } from './integrations/get-site-integrations.js';
+import { createHeartbeat } from './heartbeats/create-heartbeat.js';
+import { deleteHeartbeat } from './heartbeats/delete-heartbeat.js';
+import { listHeartbeats } from './heartbeats/list-heartbeats.js';
+import { updateHeartbeat } from './heartbeats/update-heartbeat.js';
+import { createMonitor } from './monitors/create-monitor.js';
+import { deleteMonitor } from './monitors/delete-monitor.js';
+import { listMonitors } from './monitors/list-monitors.js';
 import { listOrganizations } from './organizations/list-organizations.js';
 import { getPhpConfig } from './php/get-php-config.js';
 import { getPhpSettings } from './php/get-php-settings.js';
@@ -257,6 +264,14 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   deleteSshKey,
   getServerPublicKey,
   regenerateServerKey,
+  // monitoring
+  listHeartbeats,
+  createHeartbeat,
+  updateHeartbeat,
+  deleteHeartbeat,
+  listMonitors,
+  createMonitor,
+  deleteMonitor,
   // integrations
   getSiteIntegrations,
   enableSiteIntegration,

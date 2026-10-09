@@ -192,6 +192,13 @@ npm run build
 | `forge_delete_ssh_key` | security | Revoke an SSH key |
 | `forge_get_server_public_key` | security | The server's own public key (for Git providers, other servers) |
 | `forge_regenerate_server_key` | security | Replace the server's own key pair |
+| `forge_list_heartbeats` | monitoring | Heartbeats of a site and whether they are missing |
+| `forge_create_heartbeat` | monitoring | Alert when a scheduled task stops pinging |
+| `forge_update_heartbeat` | monitoring | Change name, schedule or grace period |
+| `forge_delete_heartbeat` | monitoring | Delete a heartbeat |
+| `forge_list_monitors` | monitoring | CPU, disk and memory monitors and their alert state |
+| `forge_create_monitor` | monitoring | Alert by email when a metric crosses a threshold |
+| `forge_delete_monitor` | monitoring | Remove a monitor |
 | `forge_get_site_integrations` | integrations | Horizon, Octane, Reverb, Pulse, Inertia SSR, scheduler and maintenance mode status |
 | `forge_enable_site_integration` | integrations | Enable an integration (e.g. put the site in maintenance mode) and wait until it is active |
 | `forge_disable_site_integration` | integrations | Disable an integration (e.g. bring the site back up) |
