@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { flattenCollection, type CollectionDocument } from '../../forge/jsonapi.js';
 import { defineTool } from '../define-tool.js';
 import { readResource } from '../shared/read.js';
-import { organizationInput, paginationInput, paginationOutput, paginationSummary } from '../shared/schemas.js';
+import { organizationInput } from '../shared/schemas.js';
 import { credentialInput, formatVpc, vpcOutput, vpcRegionInput, vpcsPath } from './vpcs.js';
 
 export const listVpcs = defineTool({
@@ -19,27 +19,26 @@ export const listVpcs = defineTool({
     credential: credentialInput,
     region: vpcRegionInput,
     vpc: z.string().min(1).optional().describe('Return only this VPC (its ID).'),
-    ...paginationInput,
   },
   outputSchema: {
     vpcs: z.array(vpcOutput),
-    ...paginationOutput,
   },
   async handler(args, { client, organization, signal }) {
     const base = vpcsPath(organization(args.organization), args.credential, args.region);
     if (args.vpc !== undefined) {
       const vpc = formatVpc(await readResource(client, `${base}/${encodeURIComponent(args.vpc)}`, signal));
-      return { structured: { vpcs: [vpc], next_cursor: null, has_more: false }, summary: `VPC ${vpc.name} (${vpc.cidrBlock}).` };
+      return { structured: { vpcs: [vpc] }, summary: `VPC ${vpc.name} (${vpc.cidrBlock}).` };
     }
-    const response = await client.get<CollectionDocument>(base, { query: { page: { size: args.page_size, cursor: args.cursor } }, signal });
+    // The endpoint is not paginated: it returns every VPC of the region.
+    const response = await client.get<CollectionDocument>(base, { signal });
     const page = flattenCollection(response.data);
     const vpcs = page.items.map(formatVpc);
     return {
-      structured: { vpcs, next_cursor: page.nextCursor, has_more: page.nextCursor !== null },
+      structured: { vpcs },
       summary:
         vpcs.length === 0
           ? `No VPCs in ${args.region}. Create one with forge_create_vpc.`
-          : `Found ${vpcs.length} VPC(s): ${vpcs.map((v) => `${v.name} (${v.id})`).join(', ')}.${paginationSummary(page.nextCursor)}`,
+          : `Found ${vpcs.length} VPC(s): ${vpcs.map((v) => `${v.name} (${v.id})`).join(', ')}.`,
     };
   },
 });

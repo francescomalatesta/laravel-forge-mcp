@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { defineTool } from '../define-tool.js';
 import { installationPhase, operationOutput, outcome, waitFor, waitInput } from '../shared/async.js';
-import { findNew, listNewestFirst } from '../shared/read.js';
+import { findNew, listRecent } from '../shared/read.js';
 import { organizationInput, serverInput } from '../shared/schemas.js';
 import { SERVER_NOT_FOUND_HINT } from '../servers/shared.js';
 import { formatSshKey, sshKeyOutput, sshKeysPath } from './shared.js';
@@ -40,7 +40,7 @@ export const addSshKey = defineTool({
   async handler(args, { client, organization, signal, sleep, progress }) {
     const base = sshKeysPath(organization(args.organization), args.server);
     // Forge returns no body: remember the existing keys with this name to spot the new one.
-    const lookup = () => listNewestFirst(client, base, signal, { name: args.name });
+    const lookup = () => listRecent(client, base, signal, { sortable: false, filter: { name: args.name } });
     const existing = args.wait ? new Set((await lookup()).map((key) => key.id)) : undefined;
     await client.post(base, { body: { name: args.name, key: args.key, user: args.user }, signal });
     const action = `add the SSH key ${args.name}`;

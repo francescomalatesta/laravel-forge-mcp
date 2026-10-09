@@ -47,7 +47,7 @@ How to observe the outcome:
 | Create/update a resource with a status field | read the resource (pass the write response as `initial` when it returns one) | `phaseOf(status, { pending: [...transitional], failed: [...] })`; `installationPhase` for the common installing/installed/removing lifecycle |
 | Status where only some values mean success | read the resource | `phaseOf(status, { completed: [...], failed: [...] })` |
 | Delete | `orGone(() => client.get(path))` | `value === null ? 'completed' : 'pending'` |
-| Create without an ID in the response | before the write, remember the IDs from `listNewestFirst` (filtered by name, path… when possible); then poll it and take `findNew` | found ? its status phase : pending |
+| Create without an ID in the response | before the write, remember the IDs from `listRecent` (filtered by name, path… when possible; `sortable` only if the endpoint declares a `created_at` sort); then poll it and take `findNew` | found ? its status phase : pending |
 | Toggle a setting | read the owning resource | field equals the requested value ? completed : pending |
 | Update several settings | read the resource | every requested field the resource exposes matches ? completed : pending; if none is exposed, return `queued` with a hint |
 | Replace a file (.env, Nginx config) | read the content back | equals the sent content, ignoring trailing whitespace ? completed : pending |
