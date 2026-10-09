@@ -74,7 +74,8 @@ npm run build
 
 | Tool | Toolset | Description |
 |---|---|---|
-| `forge_list_organizations` | core | List accessible organizations and their slugs |
+| `forge_list_organizations` | core | List accessible organizations and their slugs, or get one |
+| `forge_get_current_user` | core | The Forge user the API token belongs to |
 | `forge_list_servers` | core | List servers with filters, sorting and pagination |
 | `forge_get_server` | core | Every detail of a server |
 | `forge_list_sites` | core | Sites of an organization, a server or all organizations, with latest deployment |
@@ -208,6 +209,12 @@ npm run build
 | `forge_list_monitors` | monitoring | CPU, disk and memory monitors and their alert state |
 | `forge_create_monitor` | monitoring | Alert by email when a metric crosses a threshold |
 | `forge_delete_monitor` | monitoring | Remove a monitor |
+| `forge_list_providers` | providers | Cloud providers available for new servers |
+| `forge_list_provider_regions` | providers | Regions of a provider |
+| `forge_list_provider_sizes` | providers | Server sizes of a provider, optionally per region |
+| `forge_list_server_credentials` | providers | Provider accounts connected to the organization |
+| `forge_list_vpcs` | providers | Private networks of a provider account in a region |
+| `forge_create_vpc` | providers | Create a private network |
 | `forge_get_site_integrations` | integrations | Horizon, Octane, Reverb, Pulse, Inertia SSR, scheduler and maintenance mode status |
 | `forge_enable_site_integration` | integrations | Enable an integration (e.g. put the site in maintenance mode) and wait until it is active |
 | `forge_disable_site_integration` | integrations | Disable an integration (e.g. bring the site back up) |

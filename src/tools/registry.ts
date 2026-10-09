@@ -103,6 +103,12 @@ import { createSecurityRule } from './security-rules/create-security-rule.js';
 import { deleteSecurityRule } from './security-rules/delete-security-rule.js';
 import { listSecurityRules } from './security-rules/list-security-rules.js';
 import { updateSecurityRule } from './security-rules/update-security-rule.js';
+import { createVpc } from './providers/create-vpc.js';
+import { listProviderRegions } from './providers/list-provider-regions.js';
+import { listProviderSizes } from './providers/list-provider-sizes.js';
+import { listProviders } from './providers/list-providers.js';
+import { listServerCredentials } from './providers/list-server-credentials.js';
+import { listVpcs } from './providers/list-vpcs.js';
 import { archiveServer } from './servers/archive-server.js';
 import { clearServerLog } from './servers/clear-server-log.js';
 import { deleteServer } from './servers/delete-server.js';
@@ -141,11 +147,13 @@ import { createStorageProvider } from './storage/create-storage-provider.js';
 import { deleteStorageProvider } from './storage/delete-storage-provider.js';
 import { listStorageProviders } from './storage/list-storage-providers.js';
 import { updateStorageProvider } from './storage/update-storage-provider.js';
+import { getCurrentUser } from './user/get-current-user.js';
 
 /** Every tool shipped by the server. Add new tools here. */
 export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   // core
   listOrganizations,
+  getCurrentUser,
   listServers,
   getServer,
   listSites,
@@ -291,6 +299,13 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   listMonitors,
   createMonitor,
   deleteMonitor,
+  // providers
+  listProviders,
+  listProviderRegions,
+  listProviderSizes,
+  listServerCredentials,
+  listVpcs,
+  createVpc,
   // integrations
   getSiteIntegrations,
   enableSiteIntegration,

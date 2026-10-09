@@ -8,4 +8,8 @@ export const OPERATION_ALIASES: Record<string, { target: string; reason: string 
     target: 'organizations.servers.sites.domains.certificates.active',
     reason: 'GET .../domains/{domain}/certificate and .../certificates/active both return the active certificate.',
   },
+  me: {
+    target: 'user.show',
+    reason: 'GET /me and GET /user both return the authenticated user.',
+  },
 };
