@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.8.0] - 2026-10-09
+
+### Features
+
+- **databases:** manage database schemas, users and root password ([f3ca2ba](https://github.com/francescomalatesta/laravel-forge-mcp/commit/f3ca2bab7af31b222ce81cace5268a4f187f16f4))
+
 ## [0.7.0] - 2026-10-09
 
 ### Features
