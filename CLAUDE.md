@@ -54,6 +54,8 @@ How to observe the outcome:
 
 Transitional status values are listed in the spec enums (e.g. sites: `creating`, `installing`, `removing`; certificates: `verifying`, `creating`, `installing`; databases: `installing`, `removing`). Read errors while waiting never fail the tool: the write already succeeded, so `waitFor` returns `queued` with the reason (`unfollowed`) and `outcome` explains it.
 
+When the outcome cannot be observed through the API (e.g. reboots and service restarts expose no state), return `queued` with `check_with: 'forge_list_server_events'`, where Forge records the result; don't invent a wait condition.
+
 When the async response already carries the final result (e.g. `forge_create_deploy_key` returns the key), set `async: true` and the status fields but skip `wait`. Reference implementations: `forge_deploy_site` (resource status, custom summaries), `forge_create_site` (status with `initial` from the response), `forge_reset_deployment_state` (status endpoint), `forge_set_push_to_deploy` (toggle), `forge_update_site` (several settings), `forge_update_site_nginx_config` (file content), `forge_create_deployment_webhook` (find in list), `forge_delete_deployment_webhook` (wait for 404).
 
 ## Conventions

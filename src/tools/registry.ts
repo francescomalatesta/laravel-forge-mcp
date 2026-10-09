@@ -30,8 +30,19 @@ import { updateDomain } from './domains/update-domain.js';
 import { getServerEvent } from './events/get-server-event.js';
 import { listServerEvents } from './events/list-server-events.js';
 import { listOrganizations } from './organizations/list-organizations.js';
+import { archiveServer } from './servers/archive-server.js';
+import { clearServerLog } from './servers/clear-server-log.js';
+import { deleteServer } from './servers/delete-server.js';
 import { getServer } from './servers/get-server.js';
+import { getServerLog } from './servers/get-server-log.js';
+import { getServerNetwork } from './servers/get-server-network.js';
+import { listArchivedServers } from './servers/list-archived-servers.js';
 import { listServers } from './servers/list-servers.js';
+import { runServerAction } from './servers/run-server-action.js';
+import { runServiceAction } from './servers/run-service-action.js';
+import { unarchiveServer } from './servers/unarchive-server.js';
+import { updateServer } from './servers/update-server.js';
+import { updateServerNetwork } from './servers/update-server-network.js';
 import { clearSiteLog } from './sites/clear-site-log.js';
 import { createBalancedSite } from './sites/create-balanced-site.js';
 import { createSite } from './sites/create-site.js';
@@ -86,6 +97,18 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   createCertificate,
   runCertificateAction,
   deleteCertificate,
+  // servers
+  runServiceAction,
+  runServerAction,
+  getServerLog,
+  clearServerLog,
+  updateServer,
+  getServerNetwork,
+  updateServerNetwork,
+  listArchivedServers,
+  archiveServer,
+  unarchiveServer,
+  deleteServer,
   // deployments
   listDeployments,
   getDeployment,

@@ -106,6 +106,17 @@ npm run build
 | `forge_create_certificate` | sites | Let's Encrypt, existing, CSR or cloned certificate, waiting until installed |
 | `forge_run_certificate_action` | sites | Activate or deactivate a certificate |
 | `forge_delete_certificate` | sites | Delete a certificate |
+| `forge_run_service_action` | servers | Restart or stop Nginx, MySQL, Postgres, Redis, Supervisor; restart or reload PHP-FPM |
+| `forge_run_server_action` | servers | Reboot or power-cycle a server |
+| `forge_get_server_log` | servers | End of a server log (Nginx, PHP-FPM, MySQL, cron, daemons) |
+| `forge_clear_server_log` | servers | Empty a server log |
+| `forge_update_server` | servers | Rename, change IP addresses, timezone or tags |
+| `forge_get_server_network` | servers | Servers that can reach each other on the private network |
+| `forge_update_server_network` | servers | Set the server network |
+| `forge_list_archived_servers` | servers | Archived servers |
+| `forge_archive_server` | servers | Archive a server (Forge stops managing it) |
+| `forge_unarchive_server` | servers | Restore an archived server |
+| `forge_delete_server` | servers | Delete a server (optionally keeping it at the provider) |
 | `forge_list_deployments` | deployments | Deployments of a site or of every site on a server |
 | `forge_get_deployment` | deployments | A deployment with the end of its log |
 | `forge_get_deployment_status` | deployments | Whether a deployment is running |
