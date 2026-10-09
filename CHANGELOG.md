@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] - 2026-10-09
+
+### Features
+
+- **deployments:** follow background operations until they finish ([d8b4926](https://github.com/francescomalatesta/laravel-forge-mcp/commit/d8b4926b5c53bfe20b56353ae09f7a59bc1f8cf6))
+
 ## [0.2.0] - 2026-10-09
 
 ### Features
