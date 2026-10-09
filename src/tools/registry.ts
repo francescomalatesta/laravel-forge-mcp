@@ -89,6 +89,12 @@ import { uninstallPhpVersion } from './php/uninstall-php-version.js';
 import { updatePhpConfig } from './php/update-php-config.js';
 import { updatePhpLimits } from './php/update-php-limits.js';
 import { upgradePhpVersion } from './php/upgrade-php-version.js';
+import { createRecipe } from './recipes/create-recipe.js';
+import { deleteRecipe } from './recipes/delete-recipe.js';
+import { listRecipeRuns } from './recipes/list-recipe-runs.js';
+import { listRecipes } from './recipes/list-recipes.js';
+import { runRecipe } from './recipes/run-recipe.js';
+import { updateRecipe } from './recipes/update-recipe.js';
 import { createRedirectRule } from './redirects/create-redirect-rule.js';
 import { deleteRedirectRule } from './redirects/delete-redirect-rule.js';
 import { exportRedirectRules } from './redirects/export-redirect-rules.js';
@@ -308,6 +314,13 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   listServerCredentials,
   listVpcs,
   createVpc,
+  // recipes
+  listRecipes,
+  createRecipe,
+  updateRecipe,
+  deleteRecipe,
+  runRecipe,
+  listRecipeRuns,
   // integrations
   getSiteIntegrations,
   enableSiteIntegration,

@@ -216,6 +216,12 @@ npm run build
 | `forge_list_server_credentials` | providers | Provider accounts connected to the organization |
 | `forge_list_vpcs` | providers | Private networks of a provider account in a region |
 | `forge_create_vpc` | providers | Create a private network |
+| `forge_list_recipes` | recipes | Your recipes or the ones Forge provides |
+| `forge_create_recipe` | recipes | Save a Bash script as a recipe |
+| `forge_update_recipe` | recipes | Rename a recipe or replace its script |
+| `forge_delete_recipe` | recipes | Delete a recipe |
+| `forge_run_recipe` | recipes | Run a recipe on servers and wait for every run |
+| `forge_list_recipe_runs` | recipes | Runs of a recipe, with output |
 | `forge_get_site_integrations` | integrations | Horizon, Octane, Reverb, Pulse, Inertia SSR, scheduler and maintenance mode status |
 | `forge_enable_site_integration` | integrations | Enable an integration (e.g. put the site in maintenance mode) and wait until it is active |
 | `forge_disable_site_integration` | integrations | Disable an integration (e.g. bring the site back up) |
