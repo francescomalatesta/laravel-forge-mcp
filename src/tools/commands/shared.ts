@@ -1,9 +1,6 @@
 import { z } from 'zod';
-import type { ForgeClient } from '../../forge/client.js';
-import { ForgeApiError } from '../../forge/errors.js';
 import { phaseOf, type Phase } from '../shared/async.js';
-import { readResource } from '../shared/read.js';
-import { idInput, pick, tail } from '../shared/schemas.js';
+import { idInput, pick } from '../shared/schemas.js';
 import { sitePath } from '../shared/site-scope.js';
 
 export const COMMAND_STATUSES = ['waiting', 'running', 'finished', 'timeout', 'failed'] as const;
@@ -39,28 +36,4 @@ export function commandPhase(command: Record<string, unknown>): Phase {
   const phase = phaseOf(command.status, { completed: ['finished'], failed: ['failed', 'timeout'] });
   if (phase === 'completed' && typeof command.exit_code === 'number' && command.exit_code !== 0) return 'failed';
   return phase;
-}
-
-export const outputLinesInput = (fallback: number) =>
-  z.number().int().min(0).max(5000).default(fallback).describe('Return only the last N lines of the output (0 = full output).');
-
-export const outputFields = {
-  output: z.string().nullable().describe('Command output (last `output_lines` lines), or null when unavailable.'),
-  output_truncated: z.boolean(),
-  output_total_lines: z.number().int().nullable(),
-};
-
-export type OutputFields = z.output<z.ZodObject<typeof outputFields>>;
-
-export const NO_OUTPUT: OutputFields = { output: null, output_truncated: false, output_total_lines: null };
-
-/** Reads the output of a command run; null output when there is none yet. */
-export async function fetchOutput(client: ForgeClient, path: string, lines: number, signal: AbortSignal): Promise<OutputFields> {
-  try {
-    const output = tail((await readResource(client, `${path}/output`, signal)).output as string | null | undefined, lines);
-    return { output: output.text, output_truncated: output.truncated, output_total_lines: output.total_lines };
-  } catch (error) {
-    if (error instanceof ForgeApiError && error.status === 404) return NO_OUTPUT;
-    throw error;
-  }
 }

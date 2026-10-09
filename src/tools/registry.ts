@@ -1,5 +1,11 @@
 import type { Config } from '../config.js';
 import type { AnyToolDefinition } from './define-tool.js';
+import { createBackgroundProcess } from './background-processes/create-background-process.js';
+import { deleteBackgroundProcess } from './background-processes/delete-background-process.js';
+import { getBackgroundProcessLog } from './background-processes/get-background-process-log.js';
+import { listBackgroundProcesses } from './background-processes/list-background-processes.js';
+import { runBackgroundProcessAction } from './background-processes/run-background-process-action.js';
+import { updateBackgroundProcess } from './background-processes/update-background-process.js';
 import { createBackup } from './backups/create-backup.js';
 import { createBackupConfiguration } from './backups/create-backup-configuration.js';
 import { deleteBackup } from './backups/delete-backup.js';
@@ -64,6 +70,10 @@ import { uninstallPhpVersion } from './php/uninstall-php-version.js';
 import { updatePhpConfig } from './php/update-php-config.js';
 import { updatePhpLimits } from './php/update-php-limits.js';
 import { upgradePhpVersion } from './php/upgrade-php-version.js';
+import { createScheduledJob } from './scheduled-jobs/create-scheduled-job.js';
+import { deleteScheduledJob } from './scheduled-jobs/delete-scheduled-job.js';
+import { getScheduledJob } from './scheduled-jobs/get-scheduled-job.js';
+import { listScheduledJobs } from './scheduled-jobs/list-scheduled-jobs.js';
 import { archiveServer } from './servers/archive-server.js';
 import { clearServerLog } from './servers/clear-server-log.js';
 import { deleteServer } from './servers/delete-server.js';
@@ -199,6 +209,17 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   getDeployKey,
   createDeployKey,
   deleteDeployKey,
+  // jobs
+  listScheduledJobs,
+  getScheduledJob,
+  createScheduledJob,
+  deleteScheduledJob,
+  listBackgroundProcesses,
+  getBackgroundProcessLog,
+  createBackgroundProcess,
+  updateBackgroundProcess,
+  runBackgroundProcessAction,
+  deleteBackgroundProcess,
   // integrations
   getSiteIntegrations,
   enableSiteIntegration,

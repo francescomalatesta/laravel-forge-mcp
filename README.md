@@ -164,6 +164,16 @@ npm run build
 | `forge_delete_deploy_key` | deployments | Remove the deploy key |
 | `forge_get_deploy_hook` 🔑 | deployments | The deployment trigger URL |
 | `forge_regenerate_deploy_hook` 🔑 | deployments | Generate a new deployment trigger URL |
+| `forge_list_scheduled_jobs` | jobs | Scheduled jobs (cron) of a server or a site |
+| `forge_get_scheduled_job` | jobs | A scheduled job with the output of its last run |
+| `forge_create_scheduled_job` | jobs | Schedule a command, optionally with a heartbeat |
+| `forge_delete_scheduled_job` | jobs | Remove a scheduled job |
+| `forge_list_background_processes` | jobs | Supervisor daemons (queue workers, …) and their status |
+| `forge_get_background_process_log` | jobs | End of a background process log |
+| `forge_create_background_process` | jobs | Run a command permanently under Supervisor and wait until it is running |
+| `forge_update_background_process` | jobs | Rename or replace the Supervisor configuration |
+| `forge_run_background_process_action` | jobs | Start, stop or restart a background process, or empty its log |
+| `forge_delete_background_process` | jobs | Stop and remove a background process |
 | `forge_get_site_integrations` | integrations | Horizon, Octane, Reverb, Pulse, Inertia SSR, scheduler and maintenance mode status |
 | `forge_enable_site_integration` | integrations | Enable an integration (e.g. put the site in maintenance mode) and wait until it is active |
 | `forge_disable_site_integration` | integrations | Disable an integration (e.g. bring the site back up) |
