@@ -10,6 +10,10 @@ export interface ToolContext {
   organization(explicit: string | undefined): string;
   /** Aborted when the MCP client cancels the call. */
   signal: AbortSignal;
+  /** Waits between polls; rejects when the call is cancelled. */
+  sleep(ms: number): Promise<void>;
+  /** Sends an MCP progress notification when the client asked for progress (no-op otherwise). */
+  progress(progress: number, total: number | undefined, message: string): Promise<void>;
 }
 
 export interface ToolResult<Output> {

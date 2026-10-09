@@ -28,7 +28,7 @@ export async function createHarness(options: { env?: Record<string, string>; res
     sleep: async () => {},
   });
 
-  const server = createServer({ config, client: forge });
+  const server = createServer({ config, client: forge, sleep: async () => {} });
   const client = new Client({ name: 'test-client', version: '1.0.0' });
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
   await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
