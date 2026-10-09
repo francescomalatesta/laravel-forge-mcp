@@ -19,6 +19,7 @@ export type MockHandler = MockResponse | Error | ((request: RecordedRequest) => 
  */
 export function createMockFetch(...queue: MockHandler[]) {
   const requests: RecordedRequest[] = [];
+  const unexpected: RecordedRequest[] = [];
 
   const fetchImpl = async (input: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
     const request: RecordedRequest = {
@@ -31,6 +32,7 @@ export function createMockFetch(...queue: MockHandler[]) {
 
     const next = queue.shift();
     if (next === undefined) {
+      unexpected.push(request);
       throw new Error(`Unexpected request: ${request.method} ${request.url}`);
     }
     const handled = typeof next === 'function' ? next(request) : next;
@@ -44,5 +46,5 @@ export function createMockFetch(...queue: MockHandler[]) {
     });
   };
 
-  return { fetch: fetchImpl as typeof fetch, requests, pending: () => queue.length };
+  return { fetch: fetchImpl as typeof fetch, requests, unexpected, pending: () => queue.length };
 }

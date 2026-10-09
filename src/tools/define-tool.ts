@@ -40,6 +40,12 @@ export interface ToolDefinition<Input extends z.ZodRawShape = z.ZodRawShape, Out
   destructive?: boolean;
   /** Repeating the call with the same arguments has no additional effect. Defaults to `readOnly`. */
   idempotent?: boolean;
+  /**
+   * The write operation runs in the background in Forge (`x-processingMode: async`,
+   * HTTP 202). Must match the spec (checked by tests) and requires `operationOutput`
+   * in the output schema. See "Asynchronous operations" in CLAUDE.md.
+   */
+  async?: boolean;
   /** Returns secrets; registered only when FORGE_ALLOW_SECRETS is enabled. */
   exposesSecrets?: boolean;
   /** Extra guidance appended to 404 errors, e.g. which tool lists valid IDs. */

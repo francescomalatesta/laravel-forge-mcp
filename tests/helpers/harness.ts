@@ -39,9 +39,16 @@ export async function createHarness(options: { env?: Record<string, string>; res
     async call(name: string, args: Record<string, unknown> = {}) {
       return (await client.callTool({ name, arguments: args })) as CallToolResult;
     },
+    /** Closes the server and fails the test if requests were missing from or left in the mock queue. */
     async close() {
       await client.close();
       await server.close();
+      if (mock.unexpected.length > 0) {
+        throw new Error(`Unexpected Forge requests: ${mock.unexpected.map((r) => `${r.method} ${r.url.pathname}`).join(', ')}`);
+      }
+      if (mock.pending() > 0) {
+        throw new Error(`${mock.pending()} mocked Forge response(s) were never requested`);
+      }
     },
   };
 }

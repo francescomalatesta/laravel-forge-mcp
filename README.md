@@ -100,6 +100,10 @@ npm run build
 
 🔑 Returns secrets: registered only when `FORGE_ALLOW_SECRETS=true`. Secret fields returned by other tools (e.g. a site's `deployment_url`) are hidden unless secrets are allowed.
 
+### Background operations
+
+Forge runs most changes in the background. Tools that start one say so in their description and return a `status`: `completed` or `failed` when they waited for the result, `in_progress` if it was still running at the timeout, `queued` when they returned right away. `check_with` names the tool that shows the current state. By default these tools wait for the outcome (sending progress notifications); pass `wait: false` to return immediately, or tune `timeout_seconds`.
+
 ## Development
 
 ```bash
