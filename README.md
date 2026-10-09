@@ -127,6 +127,15 @@ npm run build
 | `forge_set_php_opcache` | servers | Enable or disable OPcache |
 | `forge_get_php_config` | servers | FPM or CLI php.ini, or the FPM pool configuration |
 | `forge_update_php_config` | servers | Replace a PHP configuration file |
+| `forge_list_databases` | databases | Database schemas on a server |
+| `forge_create_database` | databases | Create a database (optionally with a user) and wait until installed |
+| `forge_delete_database` | databases | Drop a database |
+| `forge_sync_databases` | databases | Import databases created outside Forge |
+| `forge_list_database_users` | databases | Database users on a server |
+| `forge_create_database_user` | databases | Create a user with access to databases (by ID or name) |
+| `forge_update_database_user` | databases | Change a user's password or databases |
+| `forge_delete_database_user` | databases | Delete a database user |
+| `forge_update_database_root_password` | databases | Change the database root password |
 | `forge_list_deployments` | deployments | Deployments of a site or of every site on a server |
 | `forge_get_deployment` | deployments | A deployment with the end of its log |
 | `forge_get_deployment_status` | deployments | Whether a deployment is running |

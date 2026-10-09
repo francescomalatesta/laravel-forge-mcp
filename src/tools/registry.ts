@@ -5,6 +5,15 @@ import { deleteCertificate } from './certificates/delete-certificate.js';
 import { getCertificate } from './certificates/get-certificate.js';
 import { listCertificates } from './certificates/list-certificates.js';
 import { runCertificateAction } from './certificates/run-certificate-action.js';
+import { createDatabase } from './databases/create-database.js';
+import { createDatabaseUser } from './databases/create-database-user.js';
+import { deleteDatabase } from './databases/delete-database.js';
+import { deleteDatabaseUser } from './databases/delete-database-user.js';
+import { listDatabaseUsers } from './databases/list-database-users.js';
+import { listDatabases } from './databases/list-databases.js';
+import { syncDatabases } from './databases/sync-databases.js';
+import { updateDatabaseRootPassword } from './databases/update-database-root-password.js';
+import { updateDatabaseUser } from './databases/update-database-user.js';
 import { createDeployKey } from './deployments/create-deploy-key.js';
 import { createDeploymentWebhook } from './deployments/create-deployment-webhook.js';
 import { deleteDeployKey } from './deployments/delete-deploy-key.js';
@@ -130,6 +139,16 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   setPhpOpcache,
   getPhpConfig,
   updatePhpConfig,
+  // databases
+  listDatabases,
+  createDatabase,
+  deleteDatabase,
+  syncDatabases,
+  listDatabaseUsers,
+  createDatabaseUser,
+  updateDatabaseUser,
+  deleteDatabaseUser,
+  updateDatabaseRootPassword,
   // deployments
   listDeployments,
   getDeployment,
