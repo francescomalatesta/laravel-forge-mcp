@@ -1,7 +1,27 @@
 {
   "name": "@francescomalatesta/laravel-forge-mcp",
   "version": "0.1.0",
-  "description": "Model Context Protocol server for the Laravel Forge API",
+  "description": "Unofficial Model Context Protocol (MCP) server for the Laravel Forge API",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "laravel",
+    "laravel-forge",
+    "forge",
+    "devops",
+    "ai",
+    "claude"
+  ],
+  "homepage": "https://github.com/francescomalatesta/laravel-forge-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/francescomalatesta/laravel-forge-mcp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/francescomalatesta/laravel-forge-mcp.git"
+  },
+  "license": "MIT",
+  "mcpName": "io.github.francescomalatesta/laravel-forge-mcp",
   "type": "module",
   "bin": {
     "laravel-forge-mcp": "dist/index.js"
@@ -12,8 +32,12 @@
   "engines": {
     "node": ">=22.12"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build": "npm run clean && tsc -p tsconfig.build.json",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
@@ -23,7 +47,9 @@
     "generate:types": "openapi-typescript spec/forge.openapi.json -o src/forge/schema.gen.ts",
     "spec:update": "tsx scripts/update-spec.ts && npm run generate:types",
     "inspect": "npx @modelcontextprotocol/inspector tsx src/index.ts",
-    "check": "npm run typecheck && npm test && npm run coverage:api"
+    "check": "npm run typecheck && npm test && npm run coverage:api",
+    "prepublishOnly": "npm run check && npm run build",
+    "version": "tsx scripts/sync-version.ts && git add server.json"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.31.0",

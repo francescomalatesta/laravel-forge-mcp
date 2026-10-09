@@ -1,0 +1,55 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.francescomalatesta/laravel-forge-mcp",
+  "title": "Laravel Forge MCP",
+  "description": "Unofficial MCP server for Laravel Forge: manage servers, sites and deployments.",
+  "repository": {
+    "url": "https://github.com/francescomalatesta/laravel-forge-mcp",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@francescomalatesta/laravel-forge-mcp",
+      "version": "0.1.0",
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "FORGE_API_TOKEN",
+          "description": "Laravel Forge API token (Account settings → API tokens).",
+          "isRequired": true,
+          "isSecret": true,
+          "format": "string"
+        },
+        {
+          "name": "FORGE_ORGANIZATION",
+          "description": "Default organization slug used when a tool call omits it.",
+          "format": "string"
+        },
+        {
+          "name": "FORGE_TOOLSETS",
+          "description": "Comma-separated toolsets to enable ('default', 'all' or names like 'core,sites,databases').",
+          "format": "string",
+          "default": "default"
+        },
+        {
+          "name": "FORGE_READ_ONLY",
+          "description": "Register read-only tools only.",
+          "format": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "FORGE_ALLOW_SECRETS",
+          "description": "Register tools that return secrets (.env contents, credentials, keys).",
+          "format": "boolean",
+          "default": "false"
+        }
+      ]
+    }
+  ]
+}

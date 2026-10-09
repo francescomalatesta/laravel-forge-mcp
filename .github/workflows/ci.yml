@@ -27,3 +27,5 @@ jobs:
       - run: npm test
       - run: npm run coverage:api
       - run: npm run build
+      - name: Package contents
+        run: npm pack --dry-run

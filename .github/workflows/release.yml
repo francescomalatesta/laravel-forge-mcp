@@ -1,0 +1,87 @@
+name: Release
+
+# Publishes to npm when a version tag is pushed (created by `npm version`).
+# npm authentication uses Trusted Publishing (OIDC): no npm token is stored in GitHub.
+# See RELEASING.md for the one-time setup.
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  npm:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the GitHub release
+      id-token: write # npm Trusted Publishing
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      # Trusted Publishing requires npm >= 11.5.1.
+      - run: npm install -g npm@11.6.2
+
+      - run: npm ci
+
+      - name: Tag matches package.json and server.json versions
+        run: |
+          node -e '
+            const pkg = require("./package.json");
+            const server = require("./server.json");
+            const tag = process.env.GITHUB_REF_NAME.replace(/^v/, "");
+            const versions = [pkg.version, server.version, ...server.packages.map((p) => p.version)];
+            if (versions.some((v) => v !== tag)) {
+              console.error(`Tag v${tag} does not match versions ${versions.join(", ")}. Use "npm version" to bump.`);
+              process.exit(1);
+            }
+          '
+
+      # prepublishOnly runs typecheck, tests, API coverage and the build.
+      - run: npm publish --provenance
+
+      - name: Create GitHub release
+        run: gh release create "$GITHUB_REF_NAME" --verify-tag --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  mcp-registry:
+    name: Publish to the MCP Registry
+    needs: npm
+    # Opt-in: set the repository variable MCP_REGISTRY_PUBLISH=true to enable.
+    if: vars.MCP_REGISTRY_PUBLISH == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # GitHub OIDC login for the io.github.* namespace
+    env:
+      # Pin a release from https://github.com/modelcontextprotocol/registry/releases
+      # by setting the repository variable MCP_PUBLISHER_VERSION (e.g. v1.2.3).
+      MCP_PUBLISHER_VERSION: ${{ vars.MCP_PUBLISHER_VERSION || 'latest' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install mcp-publisher
+        run: |
+          asset="mcp-publisher_linux_amd64.tar.gz"
+          if [ "$MCP_PUBLISHER_VERSION" = "latest" ]; then
+            url="https://github.com/modelcontextprotocol/registry/releases/latest/download/$asset"
+          else
+            url="https://github.com/modelcontextprotocol/registry/releases/download/$MCP_PUBLISHER_VERSION/$asset"
+          fi
+          curl -fsSL "$url" | tar xz mcp-publisher
+
+      - run: ./mcp-publisher login github-oidc
+
+      - run: ./mcp-publisher publish

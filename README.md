@@ -2,6 +2,8 @@
 
 A [Model Context Protocol](https://modelcontextprotocol.io) server for the [Laravel Forge API](https://laravel.com/forge/docs/api-reference/introduction). It lets AI assistants (Claude Code, Claude Desktop, Cursor, …) inspect and manage your Forge organizations, servers, sites and deployments.
 
+> This is an unofficial, community project. It is not affiliated with or endorsed by Laravel.
+
 > **Status: early development.** The foundations are in place and the first tools are available. Coverage of the Forge API grows tool by tool; run `npm run coverage:api` for the current numbers.
 
 ## Design goals
@@ -17,14 +19,7 @@ A [Model Context Protocol](https://modelcontextprotocol.io) server for the [Lara
 
 ## Installation
 
-The package is not published on npm yet. Build it from source:
-
-```bash
-git clone https://github.com/francescomalatesta/laravel-forge-mcp.git
-cd laravel-forge-mcp
-npm ci
-npm run build
-```
+The server runs with `npx`, no installation needed.
 
 ### Claude Code
 
@@ -32,7 +27,7 @@ npm run build
 claude mcp add laravel-forge \
   -e FORGE_API_TOKEN=your-token \
   -e FORGE_ORGANIZATION=your-org-slug \
-  -- node /absolute/path/to/laravel-forge-mcp/dist/index.js
+  -- npx -y @francescomalatesta/laravel-forge-mcp
 ```
 
 ### Claude Desktop, Cursor and other clients
@@ -41,8 +36,8 @@ claude mcp add laravel-forge \
 {
   "mcpServers": {
     "laravel-forge": {
-      "command": "node",
-      "args": ["/absolute/path/to/laravel-forge-mcp/dist/index.js"],
+      "command": "npx",
+      "args": ["-y", "@francescomalatesta/laravel-forge-mcp"],
       "env": {
         "FORGE_API_TOKEN": "your-token",
         "FORGE_ORGANIZATION": "your-org-slug"
@@ -50,6 +45,16 @@ claude mcp add laravel-forge \
     }
   }
 }
+```
+
+### From source
+
+```bash
+git clone https://github.com/francescomalatesta/laravel-forge-mcp.git
+cd laravel-forge-mcp
+npm ci
+npm run build
+# then use "command": "node", "args": ["/absolute/path/to/laravel-forge-mcp/dist/index.js"]
 ```
 
 ## Configuration
@@ -103,6 +108,8 @@ npm run spec:update    # download the latest spec and regenerate types
 npm run check          # typecheck + tests + coverage
 ```
 
+Releases are automated: see [RELEASING.md](RELEASING.md).
+
 ### Project structure
 
 ```
@@ -131,4 +138,4 @@ Tests never call the real API: fixtures in `tests/fixtures` are validated agains
 
 ## License
 
-Not yet specified.
+[MIT](LICENSE)
