@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.5.0] - 2026-10-09
+
+### Features
+
+- **sites:** manage domains and SSL certificates ([05cf271](https://github.com/francescomalatesta/laravel-forge-mcp/commit/05cf27163d5c6b41e121287f1782642fed4b0065))
+
 ## [0.4.0] - 2026-10-09
 
 ### Features
