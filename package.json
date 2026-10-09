@@ -1,9 +1,10 @@
 {
   "name": "@francescomalatesta/laravel-forge-mcp",
   "version": "0.14.0",
-  "description": "Unofficial Model Context Protocol (MCP) server for the Laravel Forge API",
+  "description": "Unofficial MCP server for Laravel Forge: covers the entire Forge API, safe by default, runs with npx",
   "keywords": [
     "mcp",
+    "mcp-server",
     "model-context-protocol",
     "laravel",
     "laravel-forge",
