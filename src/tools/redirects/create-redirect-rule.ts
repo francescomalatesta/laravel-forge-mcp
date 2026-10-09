@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { defineTool } from '../define-tool.js';
 import { installationPhase, operationOutput, outcome, waitFor, waitInput } from '../shared/async.js';
-import { findNew, listNewestFirst } from '../shared/read.js';
+import { findNew, listRecent } from '../shared/read.js';
 import { SITE_NOT_FOUND_HINT, siteScopeInput } from '../shared/site-scope.js';
 import { formatRedirectRule, redirectRuleOutput, redirectRulesPath, redirectTypeInput } from './shared.js';
 
@@ -34,7 +34,7 @@ export const createRedirectRule = defineTool({
   async handler(args, { client, organization, signal, sleep, progress }) {
     const base = redirectRulesPath(organization(args.organization), args.server, args.site);
     // Forge returns no body: remember the existing rules for this path to spot the new one.
-    const lookup = () => listNewestFirst(client, base, signal, { from: args.from });
+    const lookup = () => listRecent(client, base, signal, { sortable: true, filter: { from: args.from } });
     const existing = args.wait ? new Set((await lookup()).map((rule) => rule.id)) : undefined;
     await client.post(base, { body: { from: args.from, to: args.to, type: args.type }, signal });
     const action = `redirect ${args.from} to ${args.to}`;

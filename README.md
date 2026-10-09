@@ -4,7 +4,7 @@ A [Model Context Protocol](https://modelcontextprotocol.io) server for the [Lara
 
 > This is an unofficial, community project. It is not affiliated with or endorsed by Laravel.
 
-> **Status: early development.** The foundations are in place and the first tools are available. Coverage of the Forge API grows tool by tool; run `npm run coverage:api` for the current numbers.
+> **Status: complete coverage.** Every operation of the Forge API is covered by a tool (run `npm run coverage:api` to check). Feedback from real-world use is welcome.
 
 ## Design goals
 
@@ -70,11 +70,33 @@ npm run build
 | `FORGE_TIMEOUT_MS` | `30000` | Per-request timeout. |
 | `FORGE_MAX_RETRIES` | `2` | Retries for rate limits (429) and transient errors. |
 
+### Toolsets
+
+| Toolset | Default | Contents |
+|---|---|---|
+| `core` | ✓ | Organizations, current user, servers, sites and server events: the entry points of every workflow |
+| `sites` | ✓ | Site lifecycle, environment, Nginx, logs, domains, certificates, package credentials, load balancing |
+| `deployments` | ✓ | Deployments, deployment script, push to deploy, webhooks, deploy keys |
+| `servers` | | Create and manage servers, services, PHP, logs, network, archives, Nginx templates |
+| `databases` | | Databases, database users and backups |
+| `storage` | | Storage providers for backups |
+| `jobs` | | Scheduled jobs and background processes (Supervisor) |
+| `security` | | Firewall, basic auth, redirects, SSH keys |
+| `integrations` | | Horizon, Octane, Reverb, Pulse, Inertia, scheduler, maintenance mode |
+| `monitoring` | | Heartbeats and server monitors |
+| `recipes` | | Recipes and recipe runs |
+| `teams` | | Teams, members, invitations, sharing, roles and permissions |
+| `providers` | | Provider catalog (regions, sizes), provider credentials, VPCs |
+| `commands` | | Run arbitrary commands on sites (see below) |
+
+Enable what you need, e.g. `FORGE_TOOLSETS=default,servers,databases`: fewer tools in context help the model pick the right one.
+
 ### Tools
 
 | Tool | Toolset | Description |
 |---|---|---|
-| `forge_list_organizations` | core | List accessible organizations and their slugs |
+| `forge_list_organizations` | core | List accessible organizations and their slugs, or get one |
+| `forge_get_current_user` | core | The Forge user the API token belongs to |
 | `forge_list_servers` | core | List servers with filters, sorting and pagination |
 | `forge_get_server` | core | Every detail of a server |
 | `forge_list_sites` | core | Sites of an organization, a server or all organizations, with latest deployment |
@@ -111,6 +133,7 @@ npm run build
 | `forge_delete_package_credentials` | sites | Remove Composer or npm credentials |
 | `forge_get_load_balancer` | sites | Servers a load-balanced site sends traffic to |
 | `forge_update_load_balancer` | sites | Replace the nodes and balancing method, take nodes out of rotation |
+| `forge_create_server` | servers | Provision a server on a cloud provider or connect a custom VPS, waiting until it is ready |
 | `forge_run_service_action` | servers | Restart or stop Nginx, MySQL, Postgres, Redis, Supervisor; restart or reload PHP-FPM |
 | `forge_run_server_action` | servers | Reboot or power-cycle a server |
 | `forge_get_server_log` | servers | End of a server log (Nginx, PHP-FPM, MySQL, cron, daemons) |
@@ -208,6 +231,36 @@ npm run build
 | `forge_list_monitors` | monitoring | CPU, disk and memory monitors and their alert state |
 | `forge_create_monitor` | monitoring | Alert by email when a metric crosses a threshold |
 | `forge_delete_monitor` | monitoring | Remove a monitor |
+| `forge_list_providers` | providers | Cloud providers available for new servers |
+| `forge_list_provider_regions` | providers | Regions of a provider |
+| `forge_list_provider_sizes` | providers | Server sizes of a provider, optionally per region |
+| `forge_list_server_credentials` | providers | Provider accounts connected to the organization |
+| `forge_list_vpcs` | providers | Private networks of a provider account in a region |
+| `forge_create_vpc` | providers | Create a private network |
+| `forge_list_recipes` | recipes | Your recipes or the ones Forge provides |
+| `forge_create_recipe` | recipes | Save a Bash script as a recipe |
+| `forge_update_recipe` | recipes | Rename a recipe or replace its script |
+| `forge_delete_recipe` | recipes | Delete a recipe |
+| `forge_run_recipe` | recipes | Run a recipe on servers and wait for every run |
+| `forge_list_recipe_runs` | recipes | Runs of a recipe, with output |
+| `forge_list_teams` | teams | Teams of the organization |
+| `forge_create_team` | teams | Create a team with members and invitations |
+| `forge_update_team` | teams | Rename a team or replace its members |
+| `forge_delete_team` | teams | Delete a team |
+| `forge_list_team_members` | teams | Members of a team and their roles |
+| `forge_update_team_member` | teams | Change a member's role |
+| `forge_remove_team_member` | teams | Remove a member from a team |
+| `forge_list_team_invitations` | teams | Pending invitations of a team |
+| `forge_invite_team_member` | teams | Invite someone by email |
+| `forge_cancel_team_invitation` | teams | Cancel a pending invitation |
+| `forge_list_team_resources` | teams | Servers, recipes or credentials shared with a team |
+| `forge_share_with_team` | teams | Share a server, recipe or credential with a team |
+| `forge_unshare_from_team` | teams | Revoke a team's access to a server, recipe or credential |
+| `forge_list_roles` | teams | Custom and predefined roles |
+| `forge_list_permissions` | teams | Permissions, or those of a role |
+| `forge_create_role` | teams | Create a custom role |
+| `forge_update_role` | teams | Rename a role or replace its permissions |
+| `forge_delete_role` | teams | Delete a custom role |
 | `forge_get_site_integrations` | integrations | Horizon, Octane, Reverb, Pulse, Inertia SSR, scheduler and maintenance mode status |
 | `forge_enable_site_integration` | integrations | Enable an integration (e.g. put the site in maintenance mode) and wait until it is active |
 | `forge_disable_site_integration` | integrations | Disable an integration (e.g. bring the site back up) |

@@ -5,6 +5,7 @@ import { loadConfig } from '../../src/config.js';
 import { ForgeClient } from '../../src/forge/client.js';
 import { createServer } from '../../src/server.js';
 import { createMockFetch, type MockHandler } from './mock-fetch.js';
+import { checkRequest } from './spec-requests.js';
 
 export const TEST_BASE_URL = 'https://forge.test/api';
 
@@ -39,10 +40,18 @@ export async function createHarness(options: { env?: Record<string, string>; res
     async call(name: string, args: Record<string, unknown> = {}) {
       return (await client.callTool({ name, arguments: args })) as CallToolResult;
     },
-    /** Closes the server and fails the test if requests were missing from or left in the mock queue. */
+    /**
+     * Closes the server and fails the test if requests were missing from or left in
+     * the mock queue, or if a request does not match the spec (unknown endpoint,
+     * undeclared filter or sort value).
+     */
     async close() {
       await client.close();
       await server.close();
+      const invalid = mock.requests.map((request) => checkRequest(request)).filter((problem) => problem !== undefined);
+      if (invalid.length > 0) {
+        throw new Error(`Requests that do not match the Forge API spec:\n${invalid.join('\n')}`);
+      }
       if (mock.unexpected.length > 0) {
         throw new Error(`Unexpected Forge requests: ${mock.unexpected.map((r) => `${r.method} ${r.url.pathname}`).join(', ')}`);
       }
