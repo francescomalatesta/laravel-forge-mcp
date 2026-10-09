@@ -1,5 +1,10 @@
 import type { Config } from '../config.js';
 import type { AnyToolDefinition } from './define-tool.js';
+import { createCertificate } from './certificates/create-certificate.js';
+import { deleteCertificate } from './certificates/delete-certificate.js';
+import { getCertificate } from './certificates/get-certificate.js';
+import { listCertificates } from './certificates/list-certificates.js';
+import { runCertificateAction } from './certificates/run-certificate-action.js';
 import { createDeployKey } from './deployments/create-deploy-key.js';
 import { createDeploymentWebhook } from './deployments/create-deployment-webhook.js';
 import { deleteDeployKey } from './deployments/delete-deploy-key.js';
@@ -16,6 +21,12 @@ import { regenerateDeployHook } from './deployments/regenerate-deploy-hook.js';
 import { resetDeploymentState } from './deployments/reset-deployment-state.js';
 import { setPushToDeploy } from './deployments/set-push-to-deploy.js';
 import { updateDeploymentScript } from './deployments/update-deployment-script.js';
+import { addDomain } from './domains/add-domain.js';
+import { deleteDomain } from './domains/delete-domain.js';
+import { getDomain } from './domains/get-domain.js';
+import { listDomains } from './domains/list-domains.js';
+import { runDomainAction } from './domains/run-domain-action.js';
+import { updateDomain } from './domains/update-domain.js';
 import { getServerEvent } from './events/get-server-event.js';
 import { listServerEvents } from './events/list-server-events.js';
 import { listOrganizations } from './organizations/list-organizations.js';
@@ -63,6 +74,18 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   clearSiteLog,
   getSiteHealthcheck,
   updateSiteHealthcheck,
+  // sites: domains and certificates
+  listDomains,
+  getDomain,
+  addDomain,
+  updateDomain,
+  runDomainAction,
+  deleteDomain,
+  listCertificates,
+  getCertificate,
+  createCertificate,
+  runCertificateAction,
+  deleteCertificate,
   // deployments
   listDeployments,
   getDeployment,
