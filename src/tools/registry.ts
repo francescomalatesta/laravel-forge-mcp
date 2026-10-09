@@ -69,6 +69,10 @@ import { updateHeartbeat } from './heartbeats/update-heartbeat.js';
 import { createMonitor } from './monitors/create-monitor.js';
 import { deleteMonitor } from './monitors/delete-monitor.js';
 import { listMonitors } from './monitors/list-monitors.js';
+import { createNginxTemplate } from './nginx-templates/create-nginx-template.js';
+import { deleteNginxTemplate } from './nginx-templates/delete-nginx-template.js';
+import { listNginxTemplates } from './nginx-templates/list-nginx-templates.js';
+import { updateNginxTemplate } from './nginx-templates/update-nginx-template.js';
 import { listOrganizations } from './organizations/list-organizations.js';
 import { getPhpConfig } from './php/get-php-config.js';
 import { getPhpSettings } from './php/get-php-settings.js';
@@ -178,6 +182,10 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   updateServer,
   getServerNetwork,
   updateServerNetwork,
+  listNginxTemplates,
+  createNginxTemplate,
+  updateNginxTemplate,
+  deleteNginxTemplate,
   listArchivedServers,
   archiveServer,
   unarchiveServer,

@@ -113,6 +113,10 @@ npm run build
 | `forge_update_server` | servers | Rename, change IP addresses, timezone or tags |
 | `forge_get_server_network` | servers | Servers that can reach each other on the private network |
 | `forge_update_server_network` | servers | Set the server network |
+| `forge_list_nginx_templates` | servers | Custom Nginx templates for new sites |
+| `forge_create_nginx_template` | servers | Save an Nginx template |
+| `forge_update_nginx_template` | servers | Rename or replace an Nginx template |
+| `forge_delete_nginx_template` | servers | Delete an Nginx template |
 | `forge_list_archived_servers` | servers | Archived servers |
 | `forge_archive_server` | servers | Archive a server (Forge stops managing it) |
 | `forge_unarchive_server` | servers | Restore an archived server |
