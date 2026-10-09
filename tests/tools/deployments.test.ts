@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
+import { ASYNC_NOTE } from '../../src/server.js';
 import { createHarness, textOf } from '../helpers/harness.js';
 import { specResponse, specSchema } from '../helpers/spec-fixtures.js';
 
@@ -160,12 +161,34 @@ describe('forge_deploy_site', () => {
 });
 
 describe('deployment configuration tools', () => {
-  it('forge_reset_deployment_state deletes the deployment status', async () => {
+  it('forge_reset_deployment_state returns right away with wait=false', async () => {
     harness = await createHarness({ responses: [{ status: 202 }] });
-    const result = await harness.call('forge_reset_deployment_state', scope);
+    const result = await harness.call('forge_reset_deployment_state', { ...scope, wait: false });
     expect(harness.requests[0]).toMatchObject({ method: 'DELETE' });
     expect(harness.requests[0]?.url.pathname).toBe(`${SITE}/deployments/status`);
     expect(result.structuredContent).toEqual({ status: 'queued', check_with: 'forge_get_deployment_status' });
+  });
+
+  it('forge_reset_deployment_state waits until no deployment is reported', async () => {
+    const status = (value: string | null) =>
+      specResponse('organizations.servers.sites.deployments.status.show', 200, { data: { attributes: { status: value } } });
+    harness = await createHarness({ responses: [{ status: 202 }, { body: status('deploying') }, { body: status(null) }] });
+    const result = await harness.call('forge_reset_deployment_state', scope);
+    expect(harness.requests.map((r) => `${r.method} ${r.url.pathname}`)).toEqual([
+      `DELETE ${SITE}/deployments/status`,
+      `GET ${SITE}/deployments/status`,
+      `GET ${SITE}/deployments/status`,
+    ]);
+    expect(result.structuredContent).toEqual({ status: 'completed', check_with: 'forge_get_deployment_status' });
+    expect(textOf(result)).toMatch(/^Forge completed the request to reset the deployment state\./);
+  });
+
+  it('async tools report "queued" when the outcome cannot be read', async () => {
+    harness = await createHarness({ responses: [{ status: 202 }, { status: 403, body: { message: 'This action is unauthorized.' } }] });
+    const result = await harness.call('forge_reset_deployment_state', scope);
+    expect(result.isError).toBeFalsy();
+    expect(result.structuredContent).toEqual({ status: 'queued', check_with: 'forge_get_deployment_status' });
+    expect(textOf(result)).toContain('could not follow the operation (This action is unauthorized.)');
   });
 
   it('forge_get_deployment_script and forge_update_deployment_script', async () => {
@@ -182,39 +205,71 @@ describe('deployment configuration tools', () => {
   });
 
   it('forge_set_push_to_deploy enables and disables quick deploy', async () => {
-    harness = await createHarness({ responses: [{ status: 202 }, { status: 202 }] });
-    await harness.call('forge_set_push_to_deploy', { ...scope, enabled: true });
-    await harness.call('forge_set_push_to_deploy', { ...scope, enabled: false });
+    const siteWith = (quickDeploy: boolean) =>
+      specResponse('organizations.sites.show', 200, { data: { id: '7', attributes: { quick_deploy: quickDeploy } } });
+    harness = await createHarness({
+      responses: [{ status: 202 }, { body: siteWith(false) }, { body: siteWith(true) }, { status: 202 }],
+    });
+
+    const enabled = await harness.call('forge_set_push_to_deploy', { ...scope, enabled: true });
+    expect(enabled.structuredContent).toEqual({ status: 'completed', check_with: 'forge_get_site' });
+    const disabled = await harness.call('forge_set_push_to_deploy', { ...scope, enabled: false, wait: false });
+    expect(disabled.structuredContent).toEqual({ status: 'queued', check_with: 'forge_get_site' });
+
     expect(harness.requests.map((r) => `${r.method} ${r.url.pathname}`)).toEqual([
       `POST ${SITE}/deployments/push-to-deploy`,
+      `GET /api/orgs/acme/sites/7`,
+      `GET /api/orgs/acme/sites/7`,
       `DELETE ${SITE}/deployments/push-to-deploy`,
     ]);
   });
 
-  it('deployment webhooks can be listed, read, created and deleted', async () => {
+  it('deployment webhooks can be listed and read', async () => {
     const webhook = specSchema('DeploymentWebhookResource', { id: '4', attributes: { url: 'https://hooks.example.com/deploy' } });
     harness = await createHarness({
       responses: [
         { body: specResponse('organizations.servers.sites.webhooks.index', 200, { data: [webhook] }) },
         { body: specResponse('organizations.servers.sites.webhooks.show', 200, { data: webhook }) },
-        { status: 202 },
-        { status: 202 },
       ],
     });
 
     const list = await harness.call('forge_list_deployment_webhooks', scope);
     expect(list.structuredContent).toMatchObject({ webhooks: [{ id: '4', url: 'https://hooks.example.com/deploy' }] });
     await harness.call('forge_list_deployment_webhooks', { ...scope, webhook: 4 });
-    await harness.call('forge_create_deployment_webhook', { ...scope, url: 'https://hooks.example.com/new' });
-    await harness.call('forge_delete_deployment_webhook', { ...scope, webhook: 4 });
+    expect(harness.requests.map((r) => r.url.pathname)).toEqual([`${SITE}/webhooks`, `${SITE}/webhooks/4`]);
+  });
 
+  it('forge_create_deployment_webhook waits until the webhook appears', async () => {
+    const list = (...urls: string[]) =>
+      specResponse('organizations.servers.sites.webhooks.index', 200, {
+        data: urls.map((url, i) => specSchema('DeploymentWebhookResource', { id: String(10 + i), attributes: { url } })),
+      });
+    harness = await createHarness({
+      responses: [{ status: 202 }, { body: list('https://other.example.com') }, { body: list('https://hooks.example.com/new') }],
+    });
+
+    const result = await harness.call('forge_create_deployment_webhook', { ...scope, url: 'https://hooks.example.com/new' });
+
+    expect(harness.requests[0]).toMatchObject({ method: 'POST', body: { url: 'https://hooks.example.com/new' } });
+    expect(harness.requests[1]?.url.searchParams.get('sort')).toBe('-created_at');
+    expect(result.structuredContent).toEqual({ status: 'completed', check_with: 'forge_list_deployment_webhooks', webhook_id: '10' });
+  });
+
+  it('forge_delete_deployment_webhook waits until the webhook is gone', async () => {
+    harness = await createHarness({
+      responses: [
+        { status: 202 },
+        { body: specResponse('organizations.servers.sites.webhooks.show') },
+        { status: 404, body: { message: 'Not found.' } },
+      ],
+    });
+    const result = await harness.call('forge_delete_deployment_webhook', { ...scope, webhook: 4 });
     expect(harness.requests.map((r) => `${r.method} ${r.url.pathname}`)).toEqual([
-      `GET ${SITE}/webhooks`,
-      `GET ${SITE}/webhooks/4`,
-      `POST ${SITE}/webhooks`,
       `DELETE ${SITE}/webhooks/4`,
+      `GET ${SITE}/webhooks/4`,
+      `GET ${SITE}/webhooks/4`,
     ]);
-    expect(harness.requests[2]?.body).toEqual({ url: 'https://hooks.example.com/new' });
+    expect(result.structuredContent).toEqual({ status: 'completed', check_with: 'forge_list_deployment_webhooks' });
   });
 
   it('deploy keys can be read, created and deleted', async () => {
@@ -222,7 +277,11 @@ describe('deployment configuration tools', () => {
     harness = await createHarness({ responses: [{ body: key }, { body: key }, { status: 204 }] });
 
     expect((await harness.call('forge_get_deploy_key', scope)).structuredContent).toEqual({ key: 'ssh-ed25519 AAAA' });
-    expect((await harness.call('forge_create_deploy_key', scope)).structuredContent).toEqual({ key: 'ssh-ed25519 AAAA' });
+    expect((await harness.call('forge_create_deploy_key', scope)).structuredContent).toEqual({
+      status: 'completed',
+      check_with: 'forge_get_deploy_key',
+      key: 'ssh-ed25519 AAAA',
+    });
     expect((await harness.call('forge_delete_deploy_key', scope)).structuredContent).toEqual({ deleted: true });
     expect(harness.requests.map((r) => r.method)).toEqual(['GET', 'POST', 'DELETE']);
   });
@@ -245,6 +304,17 @@ describe('deploy hook tools expose secrets', () => {
     expect((await harness.call('forge_get_deploy_hook', scope)).structuredContent).toEqual({ url: 'https://forge/hook?token=old' });
     expect((await harness.call('forge_regenerate_deploy_hook', scope)).structuredContent).toEqual({ url: 'https://forge/hook?token=new' });
     expect(harness.requests.map((r) => r.method)).toEqual(['GET', 'PUT']);
+  });
+});
+
+describe('asynchronous tool descriptions', () => {
+  it('explain the background execution only on async tools', async () => {
+    harness = await createHarness();
+    const tools = (await harness.client.listTools()).tools;
+    const description = (name: string) => tools.find((tool) => tool.name === name)?.description ?? '';
+    expect(description('forge_deploy_site')).toContain(ASYNC_NOTE);
+    expect(description('forge_set_push_to_deploy')).toContain(ASYNC_NOTE);
+    expect(description('forge_update_deployment_script')).not.toContain(ASYNC_NOTE);
   });
 });
 

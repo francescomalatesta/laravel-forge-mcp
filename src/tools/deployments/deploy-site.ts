@@ -1,9 +1,10 @@
 import { z } from 'zod';
 import { flattenSingle, type SingleDocument } from '../../forge/jsonapi.js';
 import { defineTool } from '../define-tool.js';
+import { operationOutput, waitFor, waitInput } from '../shared/async.js';
 import {
-  FINAL_STATUSES,
   deploymentOutput,
+  deploymentPhase,
   fetchLog,
   formatDeployment,
   logLinesInput,
@@ -12,8 +13,6 @@ import {
   siteScopeInput,
   sitePath,
 } from './shared.js';
-
-export const POLL_INTERVAL_MS = 5_000;
 
 export const deploySite = defineTool({
   name: 'forge_deploy_site',
@@ -30,20 +29,15 @@ export const deploySite = defineTool({
   readOnly: false,
   destructive: false,
   idempotent: false,
+  async: true,
   notFoundHint: SITE_NOT_FOUND_HINT,
   inputSchema: {
     ...siteScopeInput,
-    wait: z.boolean().default(true).describe('Wait for the deployment to finish before returning.'),
-    timeout_seconds: z
-      .number()
-      .int()
-      .min(10)
-      .max(900)
-      .default(180)
-      .describe('Maximum time to wait when `wait` is true.'),
+    ...waitInput(180),
     log_lines: logLinesInput(50),
   },
   outputSchema: {
+    ...operationOutput,
     deployment: deploymentOutput.nullable(),
     finished: z.boolean().describe('Whether the deployment reached a final status (finished, failed, cancelled).'),
     succeeded: z.boolean(),
@@ -56,40 +50,52 @@ export const deploySite = defineTool({
     if (!created.data?.data) {
       // Accepted without a deployment in the body: nothing to follow by ID.
       return {
-        structured: { deployment: null, finished: false, succeeded: false, ...noLog },
+        structured: { status: 'queued' as const, check_with: 'forge_list_deployments', deployment: null, finished: false, succeeded: false, ...noLog },
         summary: 'Forge accepted the deployment request. Follow it with forge_list_deployments.',
       };
     }
-    let deployment = formatDeployment(flattenSingle(created.data));
+    const queuedDeployment = formatDeployment(flattenSingle(created.data));
 
     if (!args.wait) {
       return {
-        structured: { deployment, finished: false, succeeded: false, ...noLog },
-        summary: `Deployment ${deployment.id} was queued. Follow it with forge_get_deployment (deployment ${deployment.id}).`,
+        structured: { status: 'queued' as const, check_with: 'forge_get_deployment', deployment: queuedDeployment, finished: false, succeeded: false, ...noLog },
+        summary: `Deployment ${queuedDeployment.id} was queued. Follow it with forge_get_deployment (deployment ${queuedDeployment.id}).`,
       };
     }
 
-    const maxPolls = Math.ceil((args.timeout_seconds * 1000) / POLL_INTERVAL_MS);
-    for (let poll = 1; poll <= maxPolls && !FINAL_STATUSES.has(deployment.status ?? ''); poll++) {
-      await progress(poll, maxPolls, `Deployment ${deployment.id} is ${deployment.status ?? 'pending'}`);
-      await sleep(POLL_INTERVAL_MS);
-      const response = await client.get<SingleDocument>(`${base}/deployments/${encodeURIComponent(deployment.id)}`, { signal });
-      deployment = formatDeployment(flattenSingle(response.data));
-    }
+    const result = await waitFor({
+      initial: queuedDeployment,
+      poll: async () => {
+        const response = await client.get<SingleDocument>(`${base}/deployments/${encodeURIComponent(queuedDeployment.id)}`, { signal });
+        return formatDeployment(flattenSingle(response.data));
+      },
+      phase: (deployment) => deploymentPhase(deployment.status),
+      describe: (deployment) => `Deployment ${deployment.id} is ${deployment.status ?? 'pending'}`,
+      timeoutSeconds: args.timeout_seconds,
+      context: { sleep, progress },
+    });
 
-    const finished = FINAL_STATUSES.has(deployment.status ?? '');
-    const succeeded = deployment.status === 'finished';
+    const deployment = result.value ?? queuedDeployment;
+    const finished = result.status === 'completed' || result.status === 'failed';
     const log = finished ? await fetchLog(client, base, deployment.id, args.log_lines, signal) : noLog;
 
-    let summary: string;
-    if (!finished) {
-      summary = `Deployment ${deployment.id} is still ${deployment.status} after ${args.timeout_seconds}s. Check it again with forge_get_deployment.`;
-    } else if (succeeded) {
-      summary = `Deployment ${deployment.id} finished successfully.`;
-    } else {
-      summary = `Deployment ${deployment.id} ended with status "${deployment.status}". The end of the log is included; see forge_get_deployment for more lines.`;
-    }
+    const summaries = {
+      completed: `Deployment ${deployment.id} finished successfully.`,
+      failed: `Deployment ${deployment.id} ended with status "${deployment.status}". The end of the log is included; see forge_get_deployment for more lines.`,
+      in_progress: `Deployment ${deployment.id} is still ${deployment.status} after ${args.timeout_seconds}s. Check it again with forge_get_deployment.`,
+      queued: `Deployment ${deployment.id} was queued, but the tool ${result.unfollowed}. Follow it with forge_get_deployment.`,
+    };
 
-    return { structured: { deployment, finished, succeeded, ...log }, summary };
+    return {
+      structured: {
+        status: result.status,
+        check_with: 'forge_get_deployment',
+        deployment,
+        finished,
+        succeeded: result.status === 'completed',
+        ...log,
+      },
+      summary: summaries[result.status],
+    };
   },
 });

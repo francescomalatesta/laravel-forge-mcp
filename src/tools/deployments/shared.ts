@@ -3,6 +3,7 @@ import type { ForgeClient } from '../../forge/client.js';
 import { ForgeApiError } from '../../forge/errors.js';
 import { flattenSingle, type SingleDocument } from '../../forge/jsonapi.js';
 import { apiPath } from '../../forge/path.js';
+import { phaseOf, type Phase } from '../shared/async.js';
 import { relatedField, relatedId } from '../shared/relationships.js';
 import { organizationInput, serverInput, siteInput, tail } from '../shared/schemas.js';
 
@@ -20,8 +21,10 @@ export function sitePath(org: string, server: string | number, site: string | nu
 export const SITE_NOT_FOUND_HINT =
   'Check the server and site IDs with forge_list_sites (each site lists its `server_id`).';
 
-/** Deployment statuses after which nothing changes anymore. */
-export const FINAL_STATUSES = new Set(['finished', 'failed', 'failed-build', 'cancelled']);
+/** Deployments complete when finished and fail when failed, failed in the build or cancelled. */
+export function deploymentPhase(status: string | null): Phase {
+  return phaseOf(status, { completed: ['finished'], failed: ['failed', 'failed-build', 'cancelled'] });
+}
 
 export const deploymentOutput = z.looseObject({
   id: z.string().describe('Deployment ID.'),

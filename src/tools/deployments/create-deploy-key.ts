@@ -1,5 +1,6 @@
 import { flattenSingle, type SingleDocument } from '../../forge/jsonapi.js';
 import { defineTool } from '../define-tool.js';
+import { operationOutput } from '../shared/async.js';
 import { deployKeyOutput } from './get-deploy-key.js';
 import { SITE_NOT_FOUND_HINT, siteScopeInput, sitePath } from './shared.js';
 
@@ -14,9 +15,11 @@ export const createDeployKey = defineTool({
   readOnly: false,
   destructive: false,
   idempotent: true,
+  // Asynchronous in Forge, but the response already carries the key: no wait needed.
+  async: true,
   notFoundHint: SITE_NOT_FOUND_HINT,
   inputSchema: siteScopeInput,
-  outputSchema: deployKeyOutput,
+  outputSchema: { ...operationOutput, ...deployKeyOutput },
   async handler(args, { client, organization, signal }) {
     const response = await client.post<SingleDocument>(
       `${sitePath(organization(args.organization), args.server, args.site)}/deploy-key`,
@@ -24,7 +27,7 @@ export const createDeployKey = defineTool({
     );
     const key = response.data ? ((flattenSingle(response.data).key as string | null | undefined) ?? null) : null;
     return {
-      structured: { key },
+      structured: { status: key ? ('completed' as const) : ('queued' as const), check_with: 'forge_get_deploy_key', key },
       summary: key
         ? 'Deploy key ready: add this public key as a deploy key in the repository settings of the Git provider.'
         : 'Forge accepted the request; read the key with forge_get_deploy_key.',

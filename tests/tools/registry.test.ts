@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { listOperations, loadSpec } from '../../scripts/spec.js';
 import { parseToolsets } from '../../src/config.js';
 import { defineTool, type AnyToolDefinition } from '../../src/tools/define-tool.js';
+import { operationOutput } from '../../src/tools/shared/async.js';
 import { ALL_TOOLS, selectTools } from '../../src/tools/registry.js';
 import { TOOLSET_NAMES } from '../../src/tools/toolsets.js';
 
@@ -26,6 +27,30 @@ describe('tool definitions', () => {
       expect(tool.permissions).toEqual(expect.arrayContaining(operation!.permissions));
       // A read-only tool may only cover GET operations.
       if (tool.readOnly) expect(operation!.method).toBe('GET');
+    }
+  });
+});
+
+describe('asynchronous operations contract (see CLAUDE.md)', () => {
+  const isAsyncInSpec = (tool: AnyToolDefinition) =>
+    tool.operations.some((id) => {
+      const operation = specOperations.get(id);
+      return operation !== undefined && operation.method !== 'GET' && operation.processingMode === 'async';
+    });
+
+  it.each(ALL_TOOLS.map((tool) => [tool.name, tool] as const))('%s', (_name, tool) => {
+    // `async` must mirror the spec's x-processingMode of the tool's write operations.
+    expect(Boolean(tool.async), 'async flag does not match x-processingMode in the spec').toBe(isAsyncInSpec(tool));
+
+    if (tool.async) {
+      // Same status/check_with definitions for every asynchronous tool.
+      expect(tool.outputSchema.status).toBe(operationOutput.status);
+      expect(tool.outputSchema.check_with).toBe(operationOutput.check_with);
+    }
+
+    if ('wait' in tool.inputSchema || 'timeout_seconds' in tool.inputSchema) {
+      expect(tool.async, '`wait` is only for asynchronous tools').toBe(true);
+      expect(Object.keys(tool.inputSchema)).toEqual(expect.arrayContaining(['wait', 'timeout_seconds']));
     }
   });
 });

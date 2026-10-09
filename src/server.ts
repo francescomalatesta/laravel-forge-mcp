@@ -92,9 +92,13 @@ function registerTool(server: McpServer, tool: AnyToolDefinition, config: Config
   );
 }
 
+export const ASYNC_NOTE =
+  'Forge runs this operation in the background: the result `status` says whether it completed, failed, is still in progress or was only queued, and `check_with` names the tool that shows its current state.';
+
 function describe(tool: AnyToolDefinition): string {
+  const async = tool.async ? `\n\n${ASYNC_NOTE}` : '';
   const permissions = tool.permissions.length > 0 ? `\n\nRequired Forge permission: ${tool.permissions.join(', ')}.` : '';
-  return `${tool.description}${permissions}`;
+  return `${tool.description}${async}${permissions}`;
 }
 
 function abortableSleep(ms: number, signal: AbortSignal): Promise<void> {
