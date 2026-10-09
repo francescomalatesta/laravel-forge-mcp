@@ -13,6 +13,10 @@ import { deleteCertificate } from './certificates/delete-certificate.js';
 import { getCertificate } from './certificates/get-certificate.js';
 import { listCertificates } from './certificates/list-certificates.js';
 import { runCertificateAction } from './certificates/run-certificate-action.js';
+import { deleteSiteCommand } from './commands/delete-site-command.js';
+import { getSiteCommand } from './commands/get-site-command.js';
+import { listSiteCommands } from './commands/list-site-commands.js';
+import { runSiteCommand } from './commands/run-site-command.js';
 import { createDatabase } from './databases/create-database.js';
 import { createDatabaseUser } from './databases/create-database-user.js';
 import { deleteDatabase } from './databases/delete-database.js';
@@ -46,6 +50,9 @@ import { runDomainAction } from './domains/run-domain-action.js';
 import { updateDomain } from './domains/update-domain.js';
 import { getServerEvent } from './events/get-server-event.js';
 import { listServerEvents } from './events/list-server-events.js';
+import { disableSiteIntegration } from './integrations/disable-site-integration.js';
+import { enableSiteIntegration } from './integrations/enable-site-integration.js';
+import { getSiteIntegrations } from './integrations/get-site-integrations.js';
 import { listOrganizations } from './organizations/list-organizations.js';
 import { getPhpConfig } from './php/get-php-config.js';
 import { getPhpSettings } from './php/get-php-settings.js';
@@ -192,6 +199,15 @@ export const ALL_TOOLS: readonly AnyToolDefinition[] = [
   getDeployKey,
   createDeployKey,
   deleteDeployKey,
+  // integrations
+  getSiteIntegrations,
+  enableSiteIntegration,
+  disableSiteIntegration,
+  // commands
+  runSiteCommand,
+  listSiteCommands,
+  getSiteCommand,
+  deleteSiteCommand,
 ];
 
 /** Tools enabled by the configuration (toolsets, read-only mode, secrets opt-in). */

@@ -164,8 +164,17 @@ npm run build
 | `forge_delete_deploy_key` | deployments | Remove the deploy key |
 | `forge_get_deploy_hook` 🔑 | deployments | The deployment trigger URL |
 | `forge_regenerate_deploy_hook` 🔑 | deployments | Generate a new deployment trigger URL |
+| `forge_get_site_integrations` | integrations | Horizon, Octane, Reverb, Pulse, Inertia SSR, scheduler and maintenance mode status |
+| `forge_enable_site_integration` | integrations | Enable an integration (e.g. put the site in maintenance mode) and wait until it is active |
+| `forge_disable_site_integration` | integrations | Disable an integration (e.g. bring the site back up) |
+| `forge_run_site_command` | commands | Run a command in the site directory and return its output |
+| `forge_list_site_commands` | commands | Commands run on a site with status and exit code |
+| `forge_get_site_command` | commands | A command run with the end of its output |
+| `forge_delete_site_command` | commands | Remove a command run from the history |
 
 🔑 Reads or replaces secrets: registered only when `FORGE_ALLOW_SECRETS=true`. Secret fields returned by other tools (e.g. a site's `deployment_url`) are hidden unless secrets are allowed.
+
+The `commands` toolset runs arbitrary shell commands with the privileges of the site user: enable it explicitly (e.g. `FORGE_TOOLSETS=default,commands`) only when you need it. Note that `all` includes it.
 
 ### Background operations
 
